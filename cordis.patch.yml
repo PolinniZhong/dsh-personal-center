@@ -1,0 +1,5 @@
+# dsh-personal-center bundle: mount the plugin row. The client half loads
+# automatically via exports["./client"] + dsh.client.platform = web.
+- insert:
+    - id: personal-center
+      name: 'dsh-personal-center'

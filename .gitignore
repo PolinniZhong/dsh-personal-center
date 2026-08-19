@@ -1,0 +1,6 @@
+# 机器相关的本地依赖软链接,不入库(各机器自行建立,见 README 安装说明)
+node_modules/
+
+# 系统文件
+.DS_Store
+*.log
