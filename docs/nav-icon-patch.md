@@ -62,11 +62,17 @@ if (id === "personal-center") return (0, react_jsx_runtime.jsx)("svg", {
 
 ## 注意事项
 
-1. 这是**核心包文件的直接修改**,DSH 升级(重装依赖)后**会丢失**,需按本文档重打;
-2. 补丁只影响 `personal-center` 一个分区 id,其它分区行为不变;
-3. 语法校验:`node --check <该文件>` 应通过。
+1. 这是**核心包文件的直接修改**;`dependencies/dsh/` 由桌面应用从
+   `hairyf/deepseek-harness-pkg` 发布源**下载**,应用升级(如 rc.6 → rc.7)
+   会整树覆盖,**补丁丢失**——需在每次升级后按本文档重打;
+2. 重打后**刷新页面**即可生效(客户端 bundle 由 `/plugins` 提供);
+3. 验证是否被覆盖:`grep -c "personal-center" <该文件>` 应 ≥ 1;若为 0 说明被覆盖了;
+4. 补丁只影响 `personal-center` 一个分区 id,其它分区行为不变;
+5. 语法校验:`node --check <该文件>` 应通过。
 
 ## 后续(根治)
 
-等 DSH 官方为设置分区提供"自定义导航图标"注册机制(如 `settings.section` 的
-`icon` 选项或图标槽位)后,应移除本补丁,改为插件内声明,以兼容所有用户。
+- 短期:等 DSH 官方为设置分区提供"自定义导航图标"注册机制(如
+  `settings.section` 的 `icon` 选项或图标槽位)后,移除本补丁、改为插件内声明;
+- 长期:若想让图标随应用升级自动保留,需向 `hairyf/deepseek-harness-pkg`
+  发布源提交 patch(与本仓库无关,此处仅记录思路)。
