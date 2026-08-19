@@ -88,14 +88,20 @@ dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
 │   ├── index.js          # 宿主:设置命名空间 + 系统提示词注入 + 统计服务 + 环回路由
 │   └── client.js         # 浏览器:「个人」分区 UI(统计 + 个性化)
 ├── docs/
-│   ├── DESIGN.md         # 设计文档
-│   ├── PLAN.md           # 实施规划
-│   └── nav-icon-patch.md # 个人导航图标核心补丁说明(升级后需重打)
+│   ├── README.md         # 项目知识地图(入口)
+│   ├── DESIGN.md         # 架构与设计决策
+│   ├── PLAN.md           # 实施规划与路线图
+│   ├── PLATFORM-NOTES.md # DSH 平台要点与坑
+│   ├── DESIGN-SYSTEM.md  # 设计规范(间距/字号/色值)
+│   ├── DATA-MODEL.md     # 会话日志数据模型
+│   └── nav-icon-patch.md # 个人导航图标补丁说明
 ├── docs/screenshots/     # 截图
 ├── PRIVACY.md            # 隐私说明
 ├── README.md
 └── LICENSE               # MIT
 ```
+
+> 想了解架构/踩坑/规范,从 [docs/README.md](docs/README.md) 的知识地图开始。
 
 ## 📄 许可
 

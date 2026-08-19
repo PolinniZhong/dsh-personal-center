@@ -1,0 +1,97 @@
+# DSH 平台要点与坑(PLATFORM-NOTES)
+
+> 本文件沉淀开发本插件时踩过的坑、验证过的限制与可用的扩展点。**每条都是实测结论**,不是推断。
+
+## 1. 插件结构(宿主 + 客户端)
+
+一个 DSH 插件 = 一个 npm 包,`package.json` 里:
+
+```json
+{
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": { ".": "./lib/index.js", "./client": "./lib/client.js", "./package.json": "./package.json" },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": { "platform": "web", "inject": ["...客户端依赖包..."] }
+  }
+}
+```
+
+- **宿主端** `lib/index.js`:导出 `apply(ctx)`,用 `ctx.inject(["服务名"], cb)` 拿服务;
+- **浏览器端** `lib/client.js`:手写的 `window.__ModuleLoader__.load({ id, factory })`,工厂内 `require("react")`、`require("@deepseek-ai/dsh-client-runtime/client")` 等;
+- `cordis.patch.yml`:`- insert: [{id, name}]` 插入 Loader 行;包进 `dsh.profile.bundles` 后其 patch 自动生效;
+- 客户端自动加载靠 `exports["./client"]` + `dsh.client.platform: "web"`。
+
+## 2. 设置白名单(重要:自定义设置写不进 Web)
+
+api 网关(`dsh-host-apiproxy`)只向 Web 客户端暴露一个**硬编码白名单** `WEB_SETTINGS_NAMESPACES`(`agent-loop/shell/locale/permission/ui-conversation/ui-theme/web-search-deepseek` + 少数产品命名空间)。自定义命名空间即使 `settings.register` 了,客户端读会拿不到、写会报 `settings-not-exposed`。
+
+框架注释明确:让插件自行暴露命名空间是 **deferred work**。
+
+**对策(本插件采用)**:不用 `settingsScope`,改走**自有环回路由**直接调宿主 `ctx.settings` 读写。见 `lib/index.js` 的 `GET/POST /personal-center/custom-instructions`。
+
+## 3. zstd 多帧解压
+
+会话日志 `session.jsonl.zstd` 是**追加式多帧拼接**。`node:zlib` 的 `zstdDecompressSync` / `createZstdDecompress` 流式都**只解第一帧**。
+
+**对策**:按 zstd 帧结构手动扫描帧边界(`scanZstdFrames`,魔数 `0xFD2FB528`),再逐帧 `zstdDecompressSync(subarray)`。实现见 `lib/index.js`。
+
+## 4. 核心包改动不持久(升级覆盖)
+
+`<DSH_HOME>/dependencies/dsh/` 由桌面应用从 `hairyf/deepseek-harness-pkg` 发布源**整树下载**,应用升级(如 rc.6→rc.7)会覆盖整个依赖树。
+
+**结论**:任何对 `dependencies/dsh/node_modules/**` 的手动改动都会在升级后丢失。本插件的图标补丁因此需要升级后重打(见 [nav-icon-patch.md](nav-icon-patch.md))。插件本体放在 profile 的 `data/dsh/profiles/**`(用户数据),不受影响。
+
+## 5. 设置导航图标无法插件化
+
+设置壳(`dsh-client-ui-settings-general`)的 `navIcon(id)` 是**硬编码**的(models/agent-presets/plugins → 图标,其余回退齿轮),**没有**插件注册自定义图标的接口。要自定义只能改核心文件(见第 4 条的限制)。
+
+## 6. 环回路由与请求体
+
+宿主端注册环回路由(参考 plugin-console):
+
+```js
+ctx.inject(["webServer"], (c) => c.effect(() => c.webServer.register({
+  kind: "prefix", path: "/personal-center",
+  handler: async (req, res) => { /* isLoopback 校验 + sendJson */ }
+})));
+```
+
+- `isLoopback`:检查 `remoteAddress` ∈ `127.0.0.1 / ::1 / ::ffff:127.0.0.1`;
+- 读请求体:`for await (const chunk of req)` 累积后 `JSON.parse`(上限 64KB);
+- 客户端用 `fetch("/personal-center/...")` 调用(同源)。
+
+## 7. 路径与目录
+
+| 项 | 路径 |
+|---|---|
+| 会话日志根 | `<DSH_HOME>/data/dsh/sessions/<workspace>/session-<uuid>/session.jsonl.zstd` |
+| 用户设置 | `<DSH_HOME>/data/dsh/settings.yaml` |
+| profile 配置 | `<DSH_HOME>/data/dsh/profiles/web/cordis.patch.yml` + `package.json` |
+| 核心依赖(会被覆盖) | `<DSH_HOME>/dependencies/dsh/node_modules/**` |
+
+**取 DSH_HOME**:`ctx.get("settings").documentPath` 的 `dirname`(= data/dsh),回退 `~/.dsh`。
+
+## 8. 生效方式
+
+- **宿主端改动**(`lib/index.js`、路由、命名空间)→ **重启应用**;
+- **客户端改动**(`lib/client.js`)→ **刷新页面**;
+- 改了 `dependencies/dsh/node_modules/**`(如图标补丁)→ 刷新页面即可,但升级会丢。
+
+## 9. 客户端模块与 require 白名单
+
+客户端 `factory(require)` 只认已注入的模块:`"react"`、`"react/jsx-runtime"`、`"@deepseek-ai/cordis"`、`"@deepseek-ai/dsh-client-runtime/client"`、`"@deepseek-ai/dsh-client-ui-primitives"`、`"@deepseek-ai/dsh-client-ui-slots"`、`"@deepseek-ai/dsh-client-web-react"`、`"@deepseek-ai/dsh-client-schema-form"` 等。`require` 一个未注入的模块会抛错。
+
+## 10. 设置分区注册
+
+浏览器端往设置面板加分区:
+
+```js
+ctx.slots.inject("settings.section", () => ctx.slots.register({
+  name: "settings.section", id: "personal-center", order: 30,
+  label: () => t("nav"), inject: () => ({ t })
+}, Component));
+```
+
+导航图标由 `navIcon(id)` 按 `id` 决定(见第 5 条)。分区内容组件用 `role=tab/tablist/tabpanel` 自绘 tab(参考「插件」分区)。
