@@ -33,18 +33,18 @@ if (id === "personal-center") return (0, react_jsx_runtime.jsx)("svg", {
     children: [(0, react_jsx_runtime.jsx)("path", {
         fillRule: "evenodd",
         clipRule: "evenodd",
-        d: "M20 35C28.2843 35 35 28.2843 35 20C35 11.7157 28.2843 5 20 5C11.7157 5 5 11.7157 5 20C5 28.2843 11.7157 35 20 35Z",
+        d: "M20 36C28.8366 36 36 28.8366 36 20C36 11.1634 28.8366 4 20 4C11.1634 4 4 11.1634 4 20C4 28.8366 11.1634 36 20 36Z",
         stroke: "currentColor",
         strokeWidth: 3.5,
         strokeLinecap: "round",
         strokeLinejoin: "round"
     }), (0, react_jsx_runtime.jsx)("path", {
-        d: "M20 19.25C22.071 19.25 23.75 17.571 23.75 15.5C23.75 13.4289 22.071 11.75 20 11.75C17.9289 11.75 16.25 13.4289 16.25 15.5C16.25 17.571 17.9289 19.25 20 19.25Z",
+        d: "M20 19C22.2091 19 24 17.2091 24 15C24 12.7909 22.2091 11 20 11C17.7909 11 16 12.7909 16 15C16 17.2091 17.7909 19 20 19Z",
         stroke: "currentColor",
         strokeWidth: 3.5,
         strokeLinejoin: "round"
     }), (0, react_jsx_runtime.jsx)("path", {
-        d: "M9.5166 30.749C9.77438 26.8405 13.0263 23.75 17.0001 23.75H23.0001C26.9687 23.75 30.2173 26.8323 30.4826 30.7335",
+        d: "M9.5166 31.749C9.77438 27.8405 13.0263 24.75 17.0001 24.75H23.0001C26.9687 24.75 30.2173 27.8323 30.4826 31.7335",
         stroke: "currentColor",
         strokeWidth: 3.5,
         strokeLinecap: "round",
