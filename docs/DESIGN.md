@@ -27,9 +27,14 @@ lib/client.js 浏览器:设置分区 UI、统计面板 UI
 
 | 层 | 机制 |
 |---|---|
-| 设置存储 | 命名空间 `custom-instructions`(schema `{ text: string }`),宿主 `ctx.settings.register` 注册,浏览器 `settingsScope.bind` 读写,持久化进 `settings.yaml` |
+| 设置存储 | 命名空间 `custom-instructions`(schema `{ text: string }`),宿主 `ctx.settings.register` 注册;浏览器端经**环回路由** `GET/POST /personal-center/custom-instructions` 读写,持久化进 `settings.yaml` |
 | 系统提示词 | 宿主注册段 `custom-instructions`(order 10,紧随 persona 之后)+ 变量 `{{customInstructions}}`,变量提供方每次组装时读设置 → 保存即对所有会话下次请求生效;空文本渲染为空段被丢弃 |
-| 设置 UI | 浏览器注册 `settings.section` 分区(id `custom-instructions`,order 30,标签「个性化」),多行文本框 + 保存/清空 + 已保存反馈 |
+| 设置 UI | 浏览器注册 `settings.section` 分区(id `personal-center`,order 30,标签「个人」),tab 内多行文本框 + 保存/清空/失败反馈 |
+
+> **为何不走 `settingsScope`**:DSH 的 api 网关有一个 Web 设置命名空间白名单
+> (`WEB_SETTINGS_NAMESPACES`),自定义命名空间不在其中会得到 `settings-not-exposed`
+> (读不到也写不进)。框架尚未开放"插件自行暴露命名空间",故本插件用自有环回路由
+> 直接调宿主 `ctx.settings` 读写,绕开白名单。
 
 KV 缓存提示:修改指令文本会使系统提示词前缀从该段起失效,属预期行为。
 
