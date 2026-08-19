@@ -47,7 +47,10 @@ KV 缓存提示:修改指令文本会使系统提示词前缀从该段起失效,
 
 - 提供 RPC(走现有 api-gateway / `connection.api` 通道,环回):
   - `personal-center/stats?range=today|7d|30d`
-  - 返回 `{ byDay: [{date, inputTokens, outputTokens, cachedTokens, turns}], byModel: [...], tools: [{name, calls}], mcp: [{server, calls, tools}] }`;
+  - 返回 `{ byDay: [{date, inputTokens, outputTokens, cachedTokens, turns}], byModel: [{provider, model, tokens, requests, cachedTokens}], tools: [{name, calls}], mcp: [{server, calls, tools}] }`;
+- **按模型 / 提供方分组**:请求路由记录 provider+model,按二者分组求和即可;
+  「估算成本」列为可选,单价(每百万 token)由用户在设置里自行配置,宿主
+  **不硬编码任何价格**(各厂商定价易变,避免背书错误成本);
 - 实现:按需扫描会话日志目录,聚合后**进程内缓存 + 按天快照**;避免每次打开面板全量重扫;
 - **隐私边界:只聚合数字,不读取对话正文内容**;对外导出也不包含正文。
 
