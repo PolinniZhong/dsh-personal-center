@@ -130,8 +130,9 @@ M3 合流,一次重启验证。
 | 阈值设置项 | `PET_THRESHOLDS` 内置不可调 | 低 |
 | USD 币种钱包痛阈值 | 现为 ¥10 人民币语义 | 低 |
 
-### 待发布事项
+### 发布状态(已发布 v0.4.3)
 
-- 补充 README/文档截图(宠物面板浅色/深色);
-- GitHub Discussions 帖子(v0.4)发布;
-- 仓库加 `dsh-plugin` topic。
+- ✅ GitHub 仓库:https://github.com/PolinniZhong/dsh-personal-center
+- ✅ 官方展示帖:https://github.com/deepseek-ai/deepseek-harness/discussions/3595(`Show Your Plugins!`)
+- ✅ 截图(宠物面板浅色/深色 + 五种情绪 GIF)已入 `docs/screenshots/`
+- ⏳ 可选:仓库 About 区补 description + topics(`dsh-plugin` / `deepseek-harness` / `personal-center`)
