@@ -9,7 +9,7 @@
 
 - **超短(8 字)**:DSH 的「个人中心」。
 - **短(1 句)**:给 DeepSeek Harness 加一个本地「个人中心」——Token/工具用量统计 + 全局自定义指令 + 由真实数据驱动情绪的黑鲸宠物。
-- **中(2 句)**:`dsh-personal-center` 是 DeepSeek Harness 的设置插件,在设置里新增「个人」分区:一边是 GitHub 贡献图风格的使用统计(今日/累计 Token、按模型分布、常用工具)与全局自定义指令,一边是一只由真实用量驱动情绪的**浮游小黑鲸**(默认安静、逗它才动)。纯本地运行,不联网、不读聊天正文。
+- **中(2 句)**:`dsh-personal-center` 是 DeepSeek Harness 的设置插件,在设置里新增「个人」分区:一边是 GitHub 贡献图风格的使用统计(今日/累计 Token、按模型分布、常用工具)、按模型成本估算与全局自定义指令,一边是一只由真实用量驱动情绪的**浮游小黑鲸**(默认安静、逗它才动)。纯本地运行,不联网、不读聊天正文。
 
 ## 1. 这是什么
 
@@ -43,6 +43,11 @@
 | 按模型分布 | 按 provider+model 拆分 Token 与请求数 | **多模型消耗/成本对比** |
 | 常用工具 | 按调用次数排序(含 MCP 工具) | 了解自己的 AI 工作流 |
 
+### 模型成本(估算)——多模型烧钱一目了然
+- 按模型 × 每百万 token 单价估算成本,**分币种**(¥/$)分别合计;
+- 支持**峰谷分时**(DeepSeek 官方口径:北京 9-12 / 14-18 高峰),内置官方预设价,可自改;
+- 展示本周 / 本月 / 累计成本,外加**缓存命中率**(省钱洞察)。
+
 ### 个性化(全局自定义指令)——让 AI 更懂你
 - 等价于 ChatGPT / Codex 桌面端的「个性化 → 自定义指令」;
 - 输入身份/工作原则/回答偏好,保存后**本机所有会话(含已存在的)下一次请求立即生效**;
@@ -69,6 +74,7 @@
 | 仓库 | https://github.com/PolinniZhong/dsh-personal-center |
 | 安装命令 | `dsh plugin --profile web add github:PolinniZhong/dsh-personal-center` |
 | 官方展示帖 | https://github.com/deepseek-ai/deepseek-harness/discussions/3595(发帖类别:`Show Your Plugins!`) |
+| 插件目录(可选) | dshbase:https://dshbase.com/plugins/directory/(提交:ylwl1997/dshbase issues 的「Plugin submission」模板,分类 `Desktop`) |
 | 话题标签 | `dsh-plugin`、`deepseek-harness`、`personal-center` |
 | 许可证 | MIT |
 | 当前版本 | v0.4.3(统计 + 个性化 + 成本估算 + 桌面宠物,均可用) |
@@ -116,4 +122,10 @@
 - ❌ 不要夸大隐私表述:准确说法是"只聚合数字、不读取聊天正文、不联网";
 - ❌ 不要编造未实现的功能(如成本金额自动换算、语音、导出——这些在路线图里但未实现);
 - ❌ 安装命令、仓库链接必须与第 6 节完全一致,不得改写;
-- ✅ 可强调:v0.2 已可用、MIT、纯本地、深浅色、中英双语。
+- ✅ 可强调:v0.4.3 已可用、MIT、纯本地、深浅色、中英双语、已发布官方展示帖。
+
+## 12. 发布与收录状态
+
+- ✅ GitHub 仓库已发布 v0.4.3:https://github.com/PolinniZhong/dsh-personal-center
+- ✅ 官方展示帖已发:https://github.com/deepseek-ai/deepseek-harness/discussions/3595(`Show Your Plugins!`)
+- ⏳ dshbase 插件目录(可选,待收录):需先给仓库加 `dsh-plugin` topic,再按「Plugin submission」模板提交 issue(分类 `Desktop`,外部依赖选「否,开箱即用」)
