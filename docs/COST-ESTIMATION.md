@@ -11,35 +11,51 @@
 2. **结构差异**:各家分档方式不同(见 §2),但绝大多数都能收敛到"输入/输出 每百万 token";
 3. **币种差异**:国内模型(¥)、国外模型($)。
 
-## 2. 各家计价结构调研(2026-08)
+## 2. 各家计价结构调研(2026-08,以官方 API 文档为准)
 
-| 厂商/模型 | 计价维度 | 币种 | 备注 |
+| 厂商 | 计价维度 | 币种 | 官方文档 |
 |---|---|---|---|
-| DeepSeek(V3/V4 系列) | 输入(未命中缓存)、输入(命中缓存)、输出 × **峰谷分时** | ¥ | 2026-08-17 起峰谷定价,高峰翻倍 |
-| OpenAI(GPT-4o/4.1/5.x) | 输入、**缓存输入**、输出(推理模型另计推理 token) | $ | 缓存命中价约为未命中的 50% |
-| Google Gemini(2.5 Pro 等) | 输入、输出;**按上下文长度分档**(≤200k / >200k) | $ | 长上下文档更贵 |
-| Kimi(Moonshot K2 等) | 输入、输出(部分模型含缓存档) | ¥ | |
-| 豆包(Doubao) | 输入、输出 | ¥ | 整体价格低 |
-| 千问(Qwen3/max 等) | 输入、输出(部分含缓存档) | ¥ | |
+| DeepSeek(V4-Flash / V4-Pro) | 输入(缓存命中)、输入(缓存未命中)、输出 × **峰谷分时**(高峰为北京时间 9:00-12:00、14:00-18:00,空闲=高峰一半) | ¥/百万 tokens | [api-docs.deepseek.com/zh-cn/quick_start/pricing](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) |
+| OpenAI(GPT-5.x 等) | 输入、**缓存输入**、输出(推理模型另计推理 token) | $/百万 tokens | [developers.openai.com/api/docs/pricing](https://developers.openai.com/api/docs/pricing) |
+| Google Gemini(2.5/3.x) | 输入、输出;**按上下文长度分档**;另有缓存存储价 | $/百万 tokens | [ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing) |
+| Kimi(Moonshot) | 输入、输出、**缓存优惠** | ¥/百万 tokens | [platform.kimi.com/docs/pricing/chat](https://platform.kimi.com/docs/pricing/chat) |
+| 豆包(Doubao-Seed) | 输入、输出 | ¥/百万 tokens | [volcengine.com/product/doubao](https://www.volcengine.com/product/doubao) |
+| 千问(Qwen/百炼) | 输入、输出(部分含缓存档) | ¥/百万 tokens | [help.aliyun.com/zh/model-studio/models](https://help.aliyun.com/zh/model-studio/models) |
 
-**结论**:所有主流模型的公共最小结构 = **输入价 + 输出价(每百万 token)**,外加可选的 **缓存命中输入价**。币种只有 ¥ / $ 两种主流通行。峰谷、上下文分档是少数模型的特殊维度。
+> 已抓取官方页面原文验证:DeepSeek 价格表(输入命中 0.05-0.15 元/高峰 0.10-0.30、未命中 1.5-4.5/高峰 3.0-9.0、输出 4.5-13.5/高峰 9.0-27.0,单位百万 tokens)、Kimi 官方文档(计费单元=token,含缓存优惠)、千问百炼官方计费页。Gemini/OpenAI 页面为 JS 渲染,以官方 URL 为准。
+
+**结论**:所有主流模型的公共最小结构 = **输入价 + 输出价(每百万 token)**,外加可选的 **缓存命中输入价**;币种 ¥ / $ 两种。峰谷(DeepSeek)、上下文分档(Gemini)是少数模型的特殊维度——设计为**可选扩展**,不影响公共格式。
 
 ## 3. 通用价格格式(核心设计)
 
-### 3.1 一个模型一条价格记录
+### 3.1 一个模型一条价格记录(核心 = 4 个数字 + 币种)
 
 ```jsonc
 {
   "deepseek-official::deepseek-v4-flash": {
     "currency": "cny",              // 币种: cny | usd
-    "inputMiss": 2.0,               // 输入-未命中缓存:¥/$ 每百万 token
-    "inputHit": 0.5,                // 输入-命中缓存(可选;缺省 = inputMiss)
-    "output": 8.0,                  // 输出:每百万 token
+    "inputMiss": 1.5,               // 输入-未命中缓存:¥/$ 每百万 token
+    "inputHit": 0.05,               // 输入-命中缓存(可选;缺省 = inputMiss)
+    "output": 4.5,                  // 输出:每百万 token
     "reasoning": null,              // 可选:推理输出单独价(缺省 = output)
-    "note": "2026-08 官方价,取低谷档"  // 可选备注(峰谷/分档说明)
+    "peak": null,                   // 可选扩展:峰谷计价(DeepSeek),见 3.4
+    "note": "2026-08 官方价,取空闲档" // 可选备注
   }
 }
 ```
+
+### 3.4 峰谷计价(可选扩展,针对 DeepSeek)
+
+DeepSeek 官方为峰谷分时:高峰(北京 9:00-12:00、14:00-18:00)= 空闲×2。日志里**每次请求都有时间戳**,所以可按北京时区逐请求判断峰/谷。格式上只需给可选的第二组价格:
+
+```jsonc
+"peak": { "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 }  // 高峰价
+```
+
+- 不填 `peak`:按 `inputMiss/inputHit/output` 统一计;
+- 填了 `peak`:凌晨-高峰窗口内请求用 `peak` 价,其余用基础价。
+
+**v1 建议**:先做"单组价 + note 说明"(用户在 DeepSeek 换价/峰谷后改数字即可);`peak` 字段与分时计算列为 v1.1,因它只影响 DeepSeek 一个厂商、且 UI 复杂度翻倍。
 
 ### 3.2 成本计算式
 
@@ -58,7 +74,7 @@
 | 特殊计价 | 本格式如何覆盖 |
 |---|---|
 | 缓存命中折扣(DeepSeek/OpenAI/Kimi/Qwen) | `inputHit` 字段直接表达 |
-| 峰谷分时(DeepSeek) | 价格本身是"一段时间内的值",用户填**当前适用档**(默认低谷/标准),`note` 记录;不做分时计算(v1) |
+| 峰谷分时(DeepSeek) | v1:填**当前适用档**+`note`;v1.1:可选 `peak` 价组按北京时间逐请求分时计 |
 | 上下文分档(Gemini) | 填**标准档(≤200k)**,`note` 说明;不做按长度分档(v1) |
 | 推理 token 单独计价(GPT/DeepSeek) | 可选 `reasoning` 字段;不填则并入 output |
 | 币种 | `currency` 字段;汇总时**按币种分别合计**,避免汇率歧义 |
@@ -97,8 +113,11 @@
 - [ ] d) 成本卡片放「累计数据」还是独立区块?(推荐:累计数据加一张卡 + 折叠区详情)
 - [ ] e) 是否需要"今日成本"单独展示?(推荐:今日+本月+累计三个数字)
 
-## 8. 参考来源
+## 8. 参考来源(官方 API 文档)
 
-- DeepSeek 2026-08-17 峰谷调价:[腾讯新闻](https://news.qq.com/rain/a/20260817A08RSA00)、[DoNews](https://www.donews.com/news/detail/4/6673100.html)、[ZOL](https://ai.zol.com.cn/1234/12340684.html)
-- 国内模型价格对比(DeepSeek/千问/豆包/Kimi):[Bumo 博客](https://bumo.cc/blog/china-llm-api-price-comparison-2026-deepseek-qwen-doubao-kimi)、[腾讯云社区](https://cloud.tencent.com.cn/developer/article/2685603)
-- OpenAI API 定价:[OpenAI Pricing](https://developers.openai.com/api/docs/pricing)、[Morph GPT-5 定价表](https://www.morphllm.com/openai-api-pricing)
+- DeepSeek 模型与价格(官方,已抓取验证):https://api-docs.deepseek.com/zh-cn/quick_start/pricing/
+- OpenAI API Pricing(官方):https://developers.openai.com/api/docs/pricing
+- Google Gemini API Pricing(官方):https://ai.google.dev/gemini-api/docs/pricing
+- Kimi API 模型推理价格说明(官方):https://platform.kimi.com/docs/pricing/chat
+- 豆包大模型(官方):https://www.volcengine.com/product/doubao
+- 千问/阿里云百炼 模型计费(官方):https://help.aliyun.com/zh/model-studio/models
