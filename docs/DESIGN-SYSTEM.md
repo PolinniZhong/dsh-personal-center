@@ -71,3 +71,56 @@
 - 全部 `--dsw-alias-*` 令牌在 `body[data-ds-dark-theme]` 下由设计系统自动重定义,**无需写暗色覆盖**;
 - 图标 `currentColor` 继承 `label-primary`,同样自动适配;
 - 唯一静态色:文本框聚焦边框 `--dsw-static-neutral-bluish-400`(中性色,深浅皆宜)。
+
+## 7. 桌面宠物 UI 规范(v0.4)
+
+### 7.1 宠物面板(「宠物」tab,极简单卡片)
+
+```
+┌──────────────────────────────────────────────────┐
+│ [🐳 预览56px] 桌面宠物 ⓘ       [情绪气泡][启用开关] │
+│              今日:Token X · 工具 Y 次 · 缓存 Z%      │
+│              不透明度 [30%][60%][100%]              │
+└──────────────────────────────────────────────────┘
+```
+
+- 卡片容器:`dsh-pc-pet-card`(复用统计卡片范式:12px 圆角、`border-l2`、`bg-layer-3`、内边距 16×18、flex 垂直居中);
+- 预览图:56px 圆形裁切(当前情绪静态表情);信息区 flex:1;
+- 标题行:14px/600 + ⓘ(16px 圆形小按钮,`interactive-bg-hover` 底 + `label-tertiary`,`cursor:help`);
+- **ⓘ 提示 popover**:悬停/聚焦显示,230px、`bg-layer-3` + `border-l2` + 10px 圆角 + 阴影,12px/secondary 文字;用于收纳说明(默认静止/逗弄/拖拽/右键);
+- 统计行:12px/secondary,`tabular-nums`;
+- 不透明度档位:三枚小胶囊按钮(11px、`border-l2` 描边透明底;选中 = `interactive-bg-hover` 底 + `label-primary` + 500,去边框);
+- **今日情绪气泡**:胶囊(`border-radius:999px`,`bg-layer-3` + `border-l2`,内边距 3×10,左小圆图 24px + 情绪名 12px);
+- **启用开关**:见 7.2;面板无其他设置项(尺寸固定 S、位置随拖拽)。
+
+### 7.2 开关(Toggle)规范
+
+DSH 客户端没有现成 Switch 组件(实测检索),按交互色系自绘:
+
+| 部件 | 规范 |
+|---|---|
+| 尺寸 | 36 × 20px,圆钮 16px(轨道 2px 边距) |
+| 轨道·关 | `--dsw-alias-interactive-bg-hover` |
+| 轨道·开 | `--dsw-static-deepseek-400`(品牌蓝) |
+| 圆钮 | `--dsw-alias-label-primary-foreground`(主按钮前景白)+ `box-shadow: 0 1px 2px rgba(0,0,0,.28)`;位移 `translateX(16px)` |
+| 交互 | 原生 checkbox 隐藏(absolute/opacity:0),CSS 兄弟选择器驱动轨道/圆钮;200ms ease |
+
+> 不要用 `label-primary` 做圆钮(浅色主题下是黑色,在蓝轨道上突兀——已踩坑)。
+
+### 7.3 宠物浮层(全局)
+
+- `position:fixed`,`z-index:2147483000`(低于模态);拖拽时 2147483647;
+- 默认 S 尺寸 = 80×80px 容器;素材 384×384 WebP(object-fit:contain);
+- **深色可见性**:`.dsh-pet-img.active` 加 `drop-shadow(0 0 3px rgba(140,190,255,.32))` 冷色描边光(`prefers-color-scheme:dark`);
+- 气泡:跟随主题令牌(`bg-layer-3`/`label-primary`/`border-l2`),贴顶时翻转下方(`.below`),`max-width:min(280px,60vw)`;
+- 拖拽:`.dragging` 暂停动作、`scale(1.06) rotate(-3deg)` 拎起反馈、`touch-action:none`。
+
+### 7.4 动画规范(行为即设计)
+
+| 状态 | 规则 |
+|---|---|
+| 待机 | **完全静止**(单帧静态表情),无常驻循环动画——不打扰工作(参考 Codex 宠物 idle 行) |
+| 悬停/点击 | 按当前情绪播放一次动作动画(~2.2s,6 帧 WebP)后回待机 |
+| 情绪切换 | opacity .4s 交叉淡入淡出;3s 防抖 |
+| 动作素材 | `animations/<emo>.webp`(循环);待机素材 `idle/<emo>.webp`(单帧,每张 ~14KB) |
+| 无障碍 | `prefers-reduced-motion` 关闭全部动画 |

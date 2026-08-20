@@ -95,3 +95,12 @@ ctx.slots.inject("settings.section", () => ctx.slots.register({
 ```
 
 导航图标由 `navIcon(id)` 按 `id` 决定(见第 5 条)。分区内容组件用 `role=tab/tablist/tabpanel` 自绘 tab(参考「插件」分区)。
+
+## 11. 桌面端架构(Tauri + iframe)与宠物边界(实测 2026-08-20)
+
+- DSH 桌面端(`Deepseek Harness Desktop.app`)是 **Tauri 应用**(Rust,Mach-O,非 Electron):顶部导航栏在 Tauri 宿主,主应用跑在 **iframe** 内(`http://127.0.0.1:<port>`,如 3080);
+- 宿主 ↔ iframe 通过 postMessage 协议(`dsh-tauri` 插件桥):仅侧边栏/后退/前进命令与状态回报,**无通用消息通道**;
+- iframe 与 Tauri 宿主**跨源**(http://127.0.0.1 vs tauri://),iframe 内插件**无法访问父文档**;
+- dsh 运行环境**无 Tauri JS API**(无 `@tauri-apps`、无 `window.__TAURI__`)、**无 Electron**;
+- **结论:任何插件都无法把元素放到 DSH 应用窗口之外**(如全屏桌面宠物)。要全屏浮层,需 DSH 官方在 Tauri 侧提供透明置顶窗口能力,或另做独立小应用;
+- **DSH 客户端无现成 Switch/Toggle 组件**(检索全部 UI 包确认):设置页用分段按钮/自绘控件;自绘开关规范见 DESIGN-SYSTEM §7.2(白色圆钮 `label-primary-foreground` + 品牌蓝轨道,勿用 `label-primary` 做圆钮——浅色下为黑色,在蓝轨道上突兀)。

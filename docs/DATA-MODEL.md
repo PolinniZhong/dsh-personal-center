@@ -37,6 +37,7 @@
 
 - 宿主端 `lib/index.js`:`computeStats(sessionsDir)` 全量聚合;`scanZstdFrames` + `zstdDecompressSync` 解压;60 秒进程内缓存;
 - 暴露:`GET /personal-center/stats?refresh=1` → `{today,total,byModel,tools,activity,monthly}`;
+- **v0.4 新增 `cost.today`**:成本累加处按事件时间归「今日」桶,产出 `cost.today.{cny,usd}`(驱动桌面宠物「钱包痛」情绪);未配置价格时为空对象;
 - 浏览器端 `lib/client.js`:fetch 该路由渲染,loading/error/retry 三态。
 
 ## 5. 隐私边界

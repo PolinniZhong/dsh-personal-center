@@ -72,15 +72,45 @@ KV 缓存提示:修改指令文本会使系统提示词前缀从该段起失效,
 - 聚合在宿主端一次完成并缓存;日志目录大时可加"增量索引"(只扫增量段);
 - 直接读权威日志,不引入第二份数据源,保证数字与聊天统计行一致。
 
-## 5. 发布
+## 5. v0.4 桌面宠物 —— 已实现
+
+> 一只由真实用量驱动情绪的浮游黑鲸,浮在 DSH 界面右下角;纯 DOM、零依赖。素材与交互规范详见 [DESKTOP-PET.md](DESKTOP-PET.md)。
+
+### 5.1 定位与行为(参考 Codex 宠物规范)
+
+- **默认静止不打扰**:待机只显示单帧静态表情(`idle/*.webp`),无常驻循环动画;
+- **逗弄才动**:鼠标悬停或点击时,按当前情绪播放一次动作动画(`animations/*.webp`,约 2.2s)后回到待机;
+- **自由拖拽**:拖到哪停哪,松手把 `{left, top}` 持久化到配置,刷新后恢复;窗口内钳制;
+- **5 种数据驱动情绪**,30s 轮询 `/personal-center/stats`,优先级:钱包痛 > 疲惫 > 忙碌 > 打盹 > 开心(阈值按本机真实数据校准,见 DESKTOP-PET §5)。
+
+### 5.2 架构
+
+| 项 | 机制 |
+|---|---|
+| 素材 | 宿主托管:`lib/pet-assets/{animations,idle}/*.webp`(真 alpha),环回路由 `/personal-center/pet/assets/*`(regex 白名单 + immutable 缓存) |
+| 组件 | PetWidget 内联进 `lib/client.js` factory 作用域(纯 DOM,不用 react-dom);启动按配置在 `document.body` 挂 `position:fixed` 浮层 |
+| 数据 | 30s 轮询 stats → 情绪判定;宿主 `computeStats` 新增 `cost.today` 桶驱动「钱包痛」 |
+| 配置 | 命名空间 `personal-center-pet`(`{enabled, opacity, posOverride}`),环回路由 `GET/POST /personal-center/pet`;**客户端持久化串行队列**,避免并发 POST 在宿主"读-改-写"下互相覆盖 |
+| 面板 | 极简单卡片:预览 + 标题(ⓘ 悬停提示)+ 今日统计 + 不透明度档位(30/60/100%)+ 今日情绪气泡 + 启用开关;尺寸固定 S |
+
+### 5.3 关键决策(与宠物素材仓库的约定)
+
+1. **cost_today 口径**:宿主加今日成本桶(精确匹配 PRD「今日成本」;未配置价格时为空对象,情绪自然降级);
+2. **素材格式:动画 WebP** 替代 GIF(GIF 二值透明有白边);由 `AI桌面宠物/black-whale-pet/scripts/gif2webp.py` 从 RGBA 帧合成,产物提交进插件仓库;
+3. **集成方式:宿主托管素材**(懒加载、bundle 保持轻量),而非 base64 内联;
+4. **情绪判定顺序**:打盹先于开心(否则高缓存命中率用户永不入睡)。
+
+## 6. 发布
 
 1. `git init` + 提交,推送到 GitHub;
 2. README 顶部放截图;
 3. 仓库加 `dsh-plugin` topic(让 dsh-plugin-hub 索引收录,社区可发现);
 4. 在 README 提供 `dsh plugin add github:<owner>/dsh-personal-center` 一行安装命令。
 
-## 6. 已知边界
+## 7. 已知边界
 
 - 统计只覆盖本机(DSH 数据在本机);若未来支持多机同步,需引入外部存储,暂不考虑;
 - DSH 0.1.0-rc.6 兼容;上游 breaking 升级(0.2/1.0)后需按 seam 变更适配;
-- 客户端 bundle 手写(ModuleLoader 格式),不依赖构建链,改动即生效(刷新页面)。
+- 客户端 bundle 手写(ModuleLoader 格式),不依赖构建链,改动即生效(刷新页面);
+- **宠物全屏移动不可行**:桌面端是 Tauri 宿主 + iframe,dsh 应用无 Tauri API、与宿主跨源,插件无法出窗口(详见 PLATFORM-NOTES §11);要全屏需 DSH 官方浮层能力或独立小应用;
+- 宠物「钱包痛」阈值(¥10)以人民币计,USD 币种配置下语义不匹配(本机为 CNY);
