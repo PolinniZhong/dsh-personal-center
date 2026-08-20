@@ -12,10 +12,13 @@
 
 ## 📸 截图
 
-| 浅色 | 深色 |
+| 浅色 · 个人资料 | 深色 · 回顾 |
 |---|---|
-| ![个人资料 · 浅色](docs/screenshots/light-profile.png) | ![个人资料 · 深色](docs/screenshots/dark-profile.png) |
-| ![个性化 · 浅色](docs/screenshots/light-personalization.png) | ![个性化 · 深色](docs/screenshots/dark-personalization.png) |
+| ![个人资料 · 浅色](docs/screenshots/light-profile.png) | ![回顾 · 深色](docs/screenshots/dark-review.png) |
+
+| 浅色 · 宠物 | 深色 · 模型成本 |
+|---|---|
+| ![宠物 · 浅色](docs/screenshots/light-pet.png) | ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
 
 ## ✨ 功能
 
