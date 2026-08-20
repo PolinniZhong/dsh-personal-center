@@ -29,7 +29,7 @@
 | 深浅色怎么适配 | 全用 `--dsw-alias-*` 主题令牌,图标用 `currentColor` | DESIGN-SYSTEM |
 | 个性化数据存哪 | `settings.yaml` 的 `custom-instructions.text`,经自有路由读写 | DESIGN.md |
 | 统计隐私边界 | 只聚合数字,不读正文;路由仅回环 | DESIGN.md / PRIVACY.md |
-| 宠物为什么默认静止 | 参考 Codex 宠物规范:idle 待机=静止,动作只在悬停/点击时播放 | DESKTOP-PET |
+| 宠物为什么平时静止 | 参考 Codex 宠物规范:idle 待机=静止,情绪变化/逗弄时才播放动画 | DESKTOP-PET |
 | 宠物为什么不能全屏移动 | 桌面端是 Tauri 宿主 + iframe,dsh 应用与宿主跨源、无 Tauri API;插件无法出窗口 | PLATFORM-NOTES |
 | 宠物素材怎么生产 | RGBA 帧 → 动画 WebP(gif2webp.py),animations/ 动作 + idle/ 待机 | DESKTOP-PET |
 

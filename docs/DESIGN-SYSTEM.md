@@ -87,7 +87,7 @@
 - 卡片容器:`dsh-pc-pet-card`(复用统计卡片范式:12px 圆角、`border-l2`、`bg-layer-3`、内边距 16×18、flex 垂直居中);
 - 预览图:56px 圆形裁切(当前情绪静态表情);信息区 flex:1;
 - 标题行:14px/600 + ⓘ(16px 圆形小按钮,`interactive-bg-hover` 底 + `label-tertiary`,`cursor:help`);
-- **ⓘ 提示 popover**:悬停/聚焦显示,230px、`bg-layer-3` + `border-l2` + 10px 圆角 + 阴影,12px/secondary 文字;用于收纳说明(默认静止/逗弄/拖拽/右键);
+- **ⓘ 提示 popover**:悬停/聚焦显示,230px、`bg-layer-3` + `border-l2` + 10px 圆角 + 阴影,12px/secondary 文字;用于收纳说明(平时静止/情绪变化动画/逗弄/拖拽/右键);
 - 统计行:12px/secondary,`tabular-nums`;
 - 不透明度档位:三枚小胶囊按钮(11px、`border-l2` 描边透明底;选中 = `interactive-bg-hover` 底 + `label-primary` + 500,去边框);
 - **今日情绪气泡**:胶囊(`border-radius:999px`,`bg-layer-3` + `border-l2`,内边距 3×10,左小圆图 24px + 情绪名 12px);
@@ -120,7 +120,7 @@ DSH 客户端没有现成 Switch 组件(实测检索),按交互色系自绘:
 | 状态 | 规则 |
 |---|---|
 | 待机 | **完全静止**(单帧静态表情),无常驻循环动画——不打扰工作(参考 Codex 宠物 idle 行) |
+| 情绪切换 | 切换时播放一次对应情绪动画(~2.2s,6 帧 WebP)后回待机;opacity .4s 交叉淡入淡出;3s 防抖 |
 | 悬停/点击 | 按当前情绪播放一次动作动画(~2.2s,6 帧 WebP)后回待机 |
-| 情绪切换 | opacity .4s 交叉淡入淡出;3s 防抖 |
 | 动作素材 | `animations/<emo>.webp`(循环);待机素材 `idle/<emo>.webp`(单帧,每张 ~14KB) |
 | 无障碍 | `prefers-reduced-motion` 关闭全部动画 |
