@@ -8,7 +8,18 @@ DSH 设置面板的导航图标由核心壳插件硬编码(`dsh-client-ui-settin
 
 因此要给「个人」分区换图标,需要在核心壳文件里打一个小补丁(约 20 行)。
 
-## 补丁位置
+## 重打方式(推荐:一键脚本,幂等)
+
+```sh
+cd <本仓库>          # dsh-personal-center
+node scripts/patch-nav-icon.mjs
+```
+
+- 脚本自动定位核心文件(优先用 `DSH_HOME` 环境变量,回退 macOS 默认路径);
+- **幂等**:已打过补丁则跳过;未打则插入 `navIcon(id)` 的 `personal-center` 分支并做 `node --check`;
+- 每次 DSH 升级后跑一次即可恢复图标(升级会整树覆盖 `dependencies/dsh`)。
+
+## 补丁位置(脚本手打时的参考)
 
 ```
 <DSH_HOME>/dependencies/dsh/node_modules/@deepseek-ai/dsh-client-ui-settings-general/lib/client.js
