@@ -13,6 +13,7 @@
 | [DESIGN.md](DESIGN.md) | 整体架构、各层机制、隐私边界 | 想理解插件怎么工作 |
 | [PLAN.md](PLAN.md) | 里程碑、待办、决策点 | 想推进下一阶段(v0.3+) |
 | [PROMOTION.md](PROMOTION.md) | 推广写作底稿:定位/卖点/事实/语气/角度/短句 | 要写文章、发帖推广 |
+| [DESKTOP-PET.md](DESKTOP-PET.md) | 桌面宠物方向方案:形态/行为/可行性/待确认 | 规划宠物功能 |
 | [PLATFORM-NOTES.md](PLATFORM-NOTES.md) | DSH 平台的坑、限制、扩展点(血泪经验) | 改宿主端/客户端、遇到诡异 bug |
 | [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) | 间距/字号/色值/圆角/组件规范 | 改 UI |
 | [DATA-MODEL.md](DATA-MODEL.md) | 会话日志格式、统计数据从哪来 | 改统计逻辑 |
