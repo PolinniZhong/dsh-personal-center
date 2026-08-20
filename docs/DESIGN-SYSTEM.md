@@ -31,6 +31,7 @@
 | 卡片内边距 | 14px × 16px |
 | tab 栏 → 内容 | 6px |
 | 按钮高度 | 24px |
+| 胶囊子 tab | 高 20px;左右内边距 6px;选中 = `interactive-bg-hover` 全圆角背景(去下划线) |
 
 ## 3. 圆角
 
@@ -61,7 +62,9 @@
 - **设置分区**:`max-width:760px`;标题 18/600 → 描述 12/secondary → tab 栏(border-bottom + 2px 下划线 + gap 22)→ 内容;
 - **统计卡片**:grid `minmax(170px,1fr)` + gap 16;label 12/secondary、value 20/600、sub 12/secondary;
 - **按钮对**:主按钮胶囊填充、次按钮(清空)6px 圆角 + `interactive-bg-hover` 底、无边框;高 24px、字 11px;
-- **切换器(每日/每周/累计)**:纯文字、无边框无背景、gap 16、选中 `label-primary` + 500。
+- **切换器(每日/每周/累计)**:纯文字、无边框无背景、gap 16、选中 `label-primary` + 500;
+- **胶囊子 tab(概览/常用工具/成本)**:高 20px、左右内边距 6px、`border-radius:999px`;选中 = `interactive-bg-hover` 背景 + `label-primary` + 500,未选中空白(与上层下划线 tab 区分);
+- **成本编辑器**:每个模型两行 —— 第一行模型名(等宽字体)+ 删除,第二行价格配置(币种下拉 + 未命中/命中/输出 数字框 + 峰谷);模型间 24px、行内 8px;输入框仅描边(`border-l2`)、无填充背景、高 24px、字 12px。
 
 ## 6. 深色模式
 
