@@ -17,9 +17,17 @@
 |---|---|
 | ![个人资料 · 浅色](docs/screenshots/light-profile.png) | ![回顾 · 深色](docs/screenshots/dark-review.png) |
 
-| 浅色 · 宠物 | 深色 · 模型成本 |
+| 浅色 · 宠物面板 | 深色 · 宠物面板 |
 |---|---|
-| ![宠物 · 浅色](docs/screenshots/light-pet.png) | ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
+| ![宠物 · 浅色](docs/screenshots/light-pet.png) | ![宠物 · 深色](docs/screenshots/dark-pet.png) |
+
+**五种情绪动画**(开心 / 忙碌 / 疲惫 / 钱包痛 / 打盹):
+
+![五种情绪动画](docs/screenshots/pet-emotions.gif)
+
+| 模型成本 · 深色 |
+|---|
+| ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
 
 ## ✨ 功能
 

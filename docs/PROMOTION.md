@@ -79,13 +79,13 @@
 | 图 | 路径 | 说明 |
 |---|---|---|
 | 浅色·个人资料 | `docs/screenshots/light-profile.png` | 统计面板(浅色) |
-| 深色·个人资料 | `docs/screenshots/dark-profile.png` | 统计面板(深色) |
-| 浅色·个性化 | `docs/screenshots/light-personalization.png` | 自定义指令(浅色) |
-| 深色·个性化 | `docs/screenshots/dark-personalization.png` | 自定义指令(深色) |
-| 浅色·宠物面板 | `docs/screenshots/light-pet.png` | 极简宠物面板(浅色,待 v0.4 更新) |
-| 深色·宠物面板 | `docs/screenshots/dark-pet.png` | 极简宠物面板(深色,待 v0.4 更新) |
+| 深色·回顾 | `docs/screenshots/dark-review.png` | 回顾(深色) |
+| 模型成本·深色 | `docs/screenshots/dark-model-cost.png` | 成本编辑器(深色) |
+| 浅色·宠物面板 | `docs/screenshots/light-pet.png` | 极简宠物面板(浅色) |
+| 深色·宠物面板 | `docs/screenshots/dark-pet.png` | 极简宠物面板(深色) |
+| 五种情绪动画 | `docs/screenshots/pet-emotions.gif` | 开心/忙碌/疲惫/钱包痛/打盹 并排 |
 
-> 配图建议:文章顶部放浅色·个人资料 + 深色·个人资料各一张;宠物功能配一张面板截图 + 一张界面右下角的小鲸鱼。
+> 配图建议:文章顶部放浅色·个人资料 + 深色·回顾各一张;宠物功能放一张面板截图 + 一张界面右下角的小鲸鱼 + 情绪动画 GIF。
 
 ## 8. 语气与风格
 
