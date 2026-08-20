@@ -68,7 +68,7 @@
 |---|---|
 | 仓库 | https://github.com/PolinniZhong/dsh-personal-center |
 | 安装命令 | `dsh plugin --profile web add github:PolinniZhong/dsh-personal-center` |
-| 官方展示帖 | https://github.com/deepseek-ai/deepseek-harness/discussions/3449(发帖类别:`Show Your Plugins!`) |
+| 官方展示帖 | https://github.com/deepseek-ai/deepseek-harness/discussions/3595(发帖类别:`Show Your Plugins!`) |
 | 话题标签 | `dsh-plugin`、`deepseek-harness`、`personal-center` |
 | 许可证 | MIT |
 | 当前版本 | v0.4.3(统计 + 个性化 + 成本估算 + 桌面宠物,均可用) |
