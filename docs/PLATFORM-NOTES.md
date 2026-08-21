@@ -39,9 +39,9 @@ api 网关(`dsh-host-apiproxy`)只向 Web 客户端暴露一个**硬编码白名
 
 ## 4. 核心包改动不持久(升级覆盖)
 
-`<DSH_HOME>/dependencies/dsh/` 由桌面应用从 `hairyf/deepseek-harness-pkg` 发布源**整树下载**,应用升级(如 rc.6→rc.7)会覆盖整个依赖树。
+`<AppSupport>/dependencies/dsh/` 由桌面应用从 `hairyf/deepseek-harness-pkg` 发布源**整树下载**,应用升级(rc.6→rc.7、0.6.x→0.7.0 均实测)会覆盖整个依赖树。
 
-**结论**:任何对 `dependencies/dsh/node_modules/**` 的手动改动都会在升级后丢失。本插件的图标补丁因此需要升级后重打(见 [nav-icon-patch.md](nav-icon-patch.md))。插件本体放在 profile 的 `data/dsh/profiles/**`(用户数据),不受影响。
+**结论**:任何对 `dependencies/dsh/node_modules/**` 的手动改动都会在升级后丢失。本插件的图标补丁因此需要升级后重打(见 [nav-icon-patch.md](nav-icon-patch.md),2026-08-22 的 0.7.0 升级后已再次重打)。插件本体放在 profile 的 `<home>/profiles/web/**`(用户数据),不受影响。
 
 ## 5. 设置导航图标无法插件化
 
@@ -62,22 +62,30 @@ ctx.inject(["webServer"], (c) => c.effect(() => c.webServer.register({
 - 读请求体:`for await (const chunk of req)` 累积后 `JSON.parse`(上限 64KB);
 - 客户端用 `fetch("/personal-center/...")` 调用(同源)。
 
-## 7. 路径与目录
+## 7. 路径与目录(0.7.0 实测)
 
-| 项 | 路径 |
+> **0.7.0 起用户数据根(DH 数据 home)由 `dsh-home-paths.resolveDshHome` 解析:
+> `$DSH_HOME` 环境变量 > `~/.dsh`,所有用户数据都在这一单根下。**
+> 旧版(≤0.6.x)数据在 `<AppSupport>/data/dsh/`,0.7.0 升级后该目录是**空壳**——
+> 在那里查不到数据不代表丢失,先看 `~/.dsh`(2026-08-22 实测踩坑,险些误判"数据全丢")。
+
+| 项 | 路径(0.7.0) |
 |---|---|
-| 会话日志根 | `<DSH_HOME>/data/dsh/sessions/<workspace>/session-<uuid>/session.jsonl.zstd` |
-| 用户设置 | `<DSH_HOME>/data/dsh/settings.yaml` |
-| profile 配置 | `<DSH_HOME>/data/dsh/profiles/web/cordis.patch.yml` + `package.json` |
-| 核心依赖(会被覆盖) | `<DSH_HOME>/dependencies/dsh/node_modules/**` |
+| 数据根(home) | `$DSH_HOME` 或 `~/.dsh` |
+| 会话日志 | `<home>/sessions/<workspace>/session-<uuid>/session.jsonl.zstd` |
+| 用户设置 | `<home>/settings.yaml` |
+| profile 配置 | `<home>/profiles/web/`(cordis.patch.yml / package.json / node_modules) |
+| 运行时状态 | `<home>/.harness.pid`、`<home>/storages/`、`<home>/.credentials.yaml` |
+| 核心依赖(升级被覆盖) | `<AppSupport>/dependencies/dsh/node_modules/**` |
 
-**取 DSH_HOME**:`ctx.get("settings").documentPath` 的 `dirname`(= data/dsh),回退 `~/.dsh`。
+**取 home**:`ctx.get("settings").documentPath` 的 `dirname`(0.7.0 = `~/.dsh`),会话目录 = `join(dirname(documentPath), "sessions")`(本插件 stats 即如此,`dsh-settings-file` 的 `resolveSpec` 与之一致)。
 
 ## 8. 生效方式
 
 - **宿主端改动**(`lib/index.js`、路由、命名空间)→ **重启应用**;
 - **客户端改动**(`lib/client.js`)→ **刷新页面**;
-- 改了 `dependencies/dsh/node_modules/**`(如图标补丁)→ 刷新页面即可,但升级会丢。
+- 改了 `dependencies/dsh/node_modules/**`(如图标补丁)→ 刷新页面即可,但升级会丢;
+- **应用自动升级**会重启 harness 并**重跑插件注册**——升级后务必复查:① 核心补丁(nav-icon)是否被冲掉;② 设置命名空间是否注册成功(见第 12 条,失败时无日志、表现是"设置被清空")。
 
 ## 9. 客户端模块与 require 白名单
 

@@ -20,13 +20,28 @@ import { dirname, join } from "node:path";
 import { execFileSync } from "node:child_process";
 
 // 目标文件(与 PLATFORM-NOTES §4 一致:dependencies/dsh 由发布源下载)。
-// 注意:DSH_HOME 环境变量指向 <AppSupport>/data/dsh,而 dependencies/dsh 在
-// <AppSupport>/dependencies/dsh(DSH_HOME 上两级的兄弟目录),故 dirname×2。
+// 布局随版本演变,按存在性依次探测:
+//   1. macOS 桌面端固定路径:<AppSupport>/dependencies/dsh/...;
+//   2. 旧布局(≤0.6.x):DSH_HOME = <AppSupport>/data/dsh,核心依赖在其上两级
+//      <AppSupport>/dependencies/dsh(故 dirname×2);
+//   3. 直接把 DSH_HOME 当安装根尝试一次。
+// 注意:0.7.0 起 DSH_HOME = ~/.dsh(用户数据),已不在 AppSupport 下,不能再用
+// dirname×2 推导核心依赖路径——必须优先第 1 条固定路径。
 function targetFile() {
-	if (process.env.DSH_HOME) {
-		return join(dirname(dirname(process.env.DSH_HOME)), "dependencies", "dsh", "node_modules", "@deepseek-ai", "dsh-client-ui-settings-general", "lib", "client.js");
+	const candidates = [
+		join(homedir(), "Library", "Application Support", "io.github.hairyf.deepseek-harness-desktop", "dependencies", "dsh", "node_modules", "@deepseek-ai", "dsh-client-ui-settings-general", "lib", "client.js")
+	];
+	const home = process.env.DSH_HOME;
+	if (home) {
+		candidates.push(
+			join(dirname(dirname(home)), "dependencies", "dsh", "node_modules", "@deepseek-ai", "dsh-client-ui-settings-general", "lib", "client.js"),
+			join(home, "dependencies", "dsh", "node_modules", "@deepseek-ai", "dsh-client-ui-settings-general", "lib", "client.js")
+		);
 	}
-	return join(homedir(), "Library", "Application Support", "io.github.hairyf.deepseek-harness-desktop", "dependencies", "dsh", "node_modules", "@deepseek-ai", "dsh-client-ui-settings-general", "lib", "client.js");
+	for (const candidate of candidates) {
+		if (existsSync(candidate)) return candidate;
+	}
+	return candidates[0];
 }
 
 /** 补丁块(与 docs/nav-icon-patch.md 保持一致)。 */

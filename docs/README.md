@@ -40,4 +40,4 @@
 3. 改完必跑:`node --check` + 冒烟(见仓库历史里的临时 `.pc-smoke.cjs` 写法)。
 4. 涉及核心包(`dependencies/dsh/node_modules/**`)的改动**不持久**,升级会覆盖。
 5. 统计聚合只取 `assistant/message.data.usage` 与 `tool/call.data.name` 等数字字段,禁止读正文。
-6. 宠物素材改动:重新跑 `AI桌面宠物/black-whale-pet/scripts/gif2webp.py` 生成 `lib/pet-assets/{animations,idle}/` 的 WebP,再提交产物。
+6. 宠物素材改动:重新跑 `AI桌面宠物/black-whale-petblack-whale-pet-圆滚滚小黑鲸 V1/scripts/gif2webp.py` 生成 `lib/pet-assets/<skin>/{animations,idle}/` 的 WebP,再提交产物。
