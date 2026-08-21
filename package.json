@@ -1,6 +1,6 @@
 {
   "name": "dsh-personal-center",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "DSH 个人中心:设置 →「个人」分区(个人资料统计 UI + 个性化自定义指令 + 成本估算 + 桌面宠物)",
   "type": "module",
   "main": "./lib/index.js",
