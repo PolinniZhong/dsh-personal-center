@@ -91,7 +91,7 @@ KV 缓存提示:修改指令文本会使系统提示词前缀从该段起失效,
 | 组件 | PetWidget 内联进 `lib/client.js` factory 作用域(纯 DOM,不用 react-dom);启动按配置在 `document.body` 挂 `position:fixed` 浮层 |
 | 数据 | 30s 轮询 stats → 情绪判定;宿主 `computeStats` 新增 `cost.today` 桶驱动「钱包痛」 |
 | 配置 | 命名空间 `personal-center-pet`(`{enabled, opacity, posOverride}`),环回路由 `GET/POST /personal-center/pet`;**客户端持久化串行队列**,避免并发 POST 在宿主"读-改-写"下互相覆盖 |
-| 面板 | 极简单卡片:预览 + 标题(ⓘ 悬停提示)+ 今日统计 + 不透明度档位(30/60/100%)+ 今日情绪气泡 + 启用开关;尺寸固定 S |
+| 面板 | 两张宠物卡片(预览 + 宠物名 + ⓘ 提示 + 今日统计 + 不透明度档位 + 开关,互斥);左边形象交替随机动画 + 启用唤醒;尺寸固定 S |
 
 ### 5.3 关键决策(与宠物素材仓库的约定)
 
