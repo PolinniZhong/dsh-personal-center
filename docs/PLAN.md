@@ -54,7 +54,7 @@
 | 最长聊天时长 | 会话首条消息 ↔ 末条消息时间戳 | max(跨度),展示时长 + 会话标题 |
 | 常用工具 / 插件 | tool start/settle 事件 | 按工具名计数 Top N;MCP 按 `mcp__<server>__<tool>` 归组展示服务器分布 |
 
-存储位置:`<DSH_HOME>/data/dsh/sessions/**/session.jsonl.zstd`
+存储位置:`<home>/sessions/**/session.jsonl.zstd`(0.7.0 起 home = `$DSH_HOME` 或 `~/.dsh`)
 读取能力:`@deepseek-ai/dsh-session-persistence-jsonl`(应用同款,zstd 解压)。
 
 ### 2.3 浏览器端渲染
@@ -119,6 +119,7 @@ M3 合流,一次重启验证。
 - v0.4.x:桌面宠物(数据驱动情绪黑鲸)——P0 素材/数据/阈值 + P1 静止行为/拖拽/极简面板/开关样式 + 对抗式审查修复,当前 **v0.4.15**;
 - v0.4.4:宠物更名「圆滚滚小黑鲸」;情绪变化时播放一次对应动画后回待机(行为与文档统一);
 - v0.4.5~0.4.15:双宠物「圆滚滚小蓝鲸」上线(blue-whale,第二皮肤);开关互斥只能启用一只;宠物列表两张完整配置卡;交替随机动画 + 启用唤醒;未启用卡静态;去 hover/选中视觉/灰底/圆角;
+- v0.4.16:修复自定义指令"被清空/不生效"——旧版宠物布尔 `enabled` 触发 0.7.0 严格 schema 校验失败,连带回滚全部命名空间注册;schema 兼容布尔 + 注册隔离(见 PLATFORM-NOTES §12);
 - 宠物设计与实现细节见 [DESKTOP-PET.md](DESKTOP-PET.md) 与 [DESIGN.md](DESIGN.md)。
 
 ### 宠物剩余项(按优先级)
@@ -132,9 +133,11 @@ M3 合流,一次重启验证。
 | 阈值设置项 | `PET_THRESHOLDS` 内置不可调 | 低 |
 | USD 币种钱包痛阈值 | 现为 ¥10 人民币语义 | 低 |
 
-### 发布状态(已发布 v0.4.15)
+### 发布状态(已发布 v0.4.16)
 
-- ✅ GitHub 仓库:https://github.com/PolinniZhong/dsh-personal-center
+- ✅ GitHub 仓库:https://github.com/PolinniZhong/dsh-personal-center(本地与远端同步于 `9756d89`)
 - ✅ 官方展示帖:https://github.com/deepseek-ai/deepseek-harness/discussions/3595(`Show Your Plugins!`)
+- ✅ 主发布帖 https://github.com/deepseek-ai/deepseek-harness/discussions/3449 已更新至 v0.4.16(含版本历史 v0.1→v0.4.16)
 - ✅ 截图(宠物面板浅色/深色 + 五种情绪 GIF)已入 `docs/screenshots/`
+- ✅ 2026-08-22:0.7.0 升级后 nav-icon 补丁已重打(见 docs/nav-icon-patch.md)
 - ⏳ 可选:仓库 About 区补 description + topics(`dsh-plugin` / `deepseek-harness` / `personal-center`)

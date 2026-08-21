@@ -4,7 +4,7 @@
 
 ## 1. 日志位置与格式
 
-- 路径:`<DSH_HOME>/data/dsh/sessions/<workspace>/session-<uuid>/session.jsonl.zstd`;
+- 路径:`<home>/sessions/<workspace>/session-<uuid>/session.jsonl.zstd`(0.7.0 起 home = `$DSH_HOME` 或 `~/.dsh`,见 [PLATFORM-NOTES](PLATFORM-NOTES.md) 第 7 条);
 - 格式:**zstd 多帧拼接的 JSONL**(见 [PLATFORM-NOTES](PLATFORM-NOTES.md) 第 3 条),每行一个 JSON 事件;
 - 每行字段:`type`(事件类型)、`seq`(序号)、`time`(毫秒时间戳)、`data`(负载),部分事件还有 `sourceEventSeqs` / `surfaceOp`。
 

@@ -74,12 +74,16 @@ if (id === "personal-center") return (0, react_jsx_runtime.jsx)("svg", {
 ## 注意事项
 
 1. 这是**核心包文件的直接修改**;`dependencies/dsh/` 由桌面应用从
-   `hairyf/deepseek-harness-pkg` 发布源**下载**,应用升级(如 rc.6 → rc.7)
-   会整树覆盖,**补丁丢失**——需在每次升级后按本文档重打;
+   `hairyf/deepseek-harness-pkg` 发布源**下载**,应用升级(如 rc.6 → rc.7、
+   0.6.x → 0.7.0)会整树覆盖,**补丁丢失**——需在每次升级后按本文档重打;
+   **实测记录:2026-08-22 的 0.7.0 升级后已再次冲掉并重打**;
 2. 重打后**刷新页面**即可生效(客户端 bundle 由 `/plugins` 提供);
 3. 验证是否被覆盖:`grep -c "personal-center" <该文件>` 应 ≥ 1;若为 0 说明被覆盖了;
 4. 补丁只影响 `personal-center` 一个分区 id,其它分区行为不变;
-5. 语法校验:`node --check <该文件>` 应通过。
+5. 语法校验:`node --check <该文件>` 应通过;
+6. **0.7.0 起 `DSH_HOME` 变为 `~/.dsh`**,不再位于 App Support 下,脚本已改为
+   多候选路径探测(优先 macOS 固定路径 `<AppSupport>/dependencies/dsh/...`,
+   兼容旧布局的 `dirname×2` 推导),两种布局都能自动定位。
 
 ## 后续(根治)
 

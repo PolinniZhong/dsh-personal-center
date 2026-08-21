@@ -77,7 +77,7 @@
 | 插件目录(可选) | dshbase:https://dshbase.com/plugins/directory/(提交:ylwl1997/dshbase issues 的「Plugin submission」模板,分类 `Desktop`) |
 | 话题标签 | `dsh-plugin`、`deepseek-harness`、`personal-center` |
 | 许可证 | MIT |
-| 当前版本 | v0.4.15(统计 + 个性化 + 成本估算 + 桌面宠物(黑鲸/蓝鲸双皮肤),均可用) |
+| 当前版本 | v0.4.16(统计 + 个性化 + 成本估算 + 桌面宠物(黑鲸/蓝鲸双皮肤),均可用;v0.4.16 修复自定义指令偶发被清空/不生效) |
 | 技术栈(一句话) | DSH 插件架构:宿主端(Node,会话日志聚合)+ 浏览器端(手写 bundle,React UI + 纯 DOM 宠物) |
 
 ## 7. 截图素材
@@ -123,10 +123,10 @@
 - ❌ 不要夸大隐私表述:准确说法是"只聚合数字、不读取聊天正文、不联网";
 - ❌ 不要编造未实现的功能(如成本金额自动换算、语音、导出——这些在路线图里但未实现);
 - ❌ 安装命令、仓库链接必须与第 6 节完全一致,不得改写;
-- ✅ 可强调:v0.4.15 已可用(含黑鲸/蓝鲸双皮肤宠物)、MIT、纯本地、深浅色、中英双语、已发布官方展示帖。
+- ✅ 可强调:v0.4.16 已可用(含黑鲸/蓝鲸双皮肤宠物)、MIT、纯本地、深浅色、中英双语、已发布官方展示帖。
 
 ## 12. 发布与收录状态
 
-- ✅ GitHub 仓库已发布 v0.4.15:https://github.com/PolinniZhong/dsh-personal-center
+- ✅ GitHub 仓库已发布 v0.4.16:https://github.com/PolinniZhong/dsh-personal-center
 - ✅ 官方展示帖已发:https://github.com/deepseek-ai/deepseek-harness/discussions/3595(`Show Your Plugins!`)
 - ⏳ dshbase 插件目录(可选,待收录):需先给仓库加 `dsh-plugin` topic,再按「Plugin submission」模板提交 issue(分类 `Desktop`,外部依赖选「否,开箱即用」)

@@ -112,3 +112,21 @@ ctx.slots.inject("settings.section", () => ctx.slots.register({
 - dsh 运行环境**无 Tauri JS API**(无 `@tauri-apps`、无 `window.__TAURI__`)、**无 Electron**;
 - **结论:任何插件都无法把元素放到 DSH 应用窗口之外**(如全屏桌面宠物)。要全屏浮层,需 DSH 官方在 Tauri 侧提供透明置顶窗口能力,或另做独立小应用;
 - **DSH 客户端无现成 Switch/Toggle 组件**(检索全部 UI 包确认):设置页用分段按钮/自绘控件;自绘开关规范见 DESIGN-SYSTEM §7.2(白色圆钮 `label-primary-foreground` + 品牌蓝轨道,勿用 `label-primary` 做圆钮——浅色下为黑色,在蓝轨道上突兀)。
+
+## 12. 设置命名空间注册:一个失败,整批回滚(0.7.0 实测)
+
+`dsh-settings` 的 `settings.register(ns, schema)` 在同一个 `ctx.inject(["settings"])` 回调里按**同一 fiber** 提交:任一 `register()` 抛错(最常见:存量 section 校验失败),**整批注册全部失效**——其它命名空间也读不到(取值返回默认值),UI 表现"设置被清空"、系统提示词注入静默不生效,且**无任何报错日志**(2026-08-22 实测:custom-instructions / personal-center-pricing / personal-center-pet 三个命名空间因宠物旧值 `enabled: true`(布尔)被 `z.string()` 拒绝而全部消失)。
+
+触发条件:0.7.0 的 schemastery 校验**变严格**(旧版对 `true`→string 宽容或强转),应用升级重启、插件重新注册时才爆雷——存量旧值能一直潜伏到升级。
+
+对策:
+- **schema 对历史值宽容**:如 `enabled: z.union([z.string(), z.boolean()])` 兼容旧布尔,显示层仍归一化;
+- **逐个注册并隔离失败**:`safeRegister` 包 try/catch + `console.warn`,任一命名空间的脏值只跳过自己,不再连累 `custom-instructions`;
+- 升级后若"设置被清空",先核对 `~/.dsh/settings.yaml` 存量值是否与当前 schema 不符。
+
+## 13. 桌面端自动升级与启动失败(0.7.0 实测)
+
+- 桌面端会**自动下载并安装新版**(`<AppSupport>/updates/` 下可见 .dmg),随后自动重启 harness;
+- 升级后 profile 依赖可能尚未解析,启动报 `cannot resolve profile bundle "xxx" ... run 'dsh plugin --profile web install'`——桌面端会自动补装(实测 0.6.x→0.7.0 时 dsh-session-kb 反复启动失败后自动恢复);
+- **宿主端插件在每次启动时重新注册命名空间**,升级=新核心代码+新校验规则,是存量数据问题集中暴露的时刻(见第 12 条);
+- 排查路径:启动失败栈在 `logs/desktop.log`(带 `dsh:` 前缀的 stderr)与 `logs/dsh-web.log`(.1/.2 轮转);`lsof -p <harness pid>` 可确认进程实际打开的 settings.yaml;`~/.dsh/.harness.pid` 记录当前 pid 与端口。

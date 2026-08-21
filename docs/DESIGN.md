@@ -42,7 +42,7 @@ KV 缓存提示:修改指令文本会使系统提示词前缀从该段起失效,
 
 ### 4.1 数据来源(已确认存在)
 
-- 会话日志:`<DSH_HOME>/data/dsh/sessions/<workspace>/session-<uuid>/session.jsonl.zstd`(zstd 压缩 JSONL,读写能力在 `@deepseek-ai/dsh-session-persistence-jsonl`);
+- 会话日志:`<home>/sessions/<workspace>/session-<uuid>/session.jsonl.zstd`(0.7.0 起 home = `$DSH_HOME` 或 `~/.dsh`;zstd 压缩 JSONL,读写能力在 `@deepseek-ai/dsh-session-persistence-jsonl`);
 - **Token 用量**:请求头事件携带 usage(输入/输出/缓存读/缓存写),聊天统计行已经用 `tokenUsage` 投影展示(每会话);
 - **工具调用**:日志中的 tool start / settle 事件,含工具名与参数;
 - **MCP**:工具注册名为 `mcp__<serverName>__<rawName>`,可按 serverName 前缀聚合;
