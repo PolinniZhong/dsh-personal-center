@@ -26,7 +26,7 @@
 
 ## 3. 形态与素材(落地决策)
 
-- **皮肤:双皮肤(v0.4.5)** —— **「圆滚滚小黑鲸」**(DSH 黑色品牌)+ **「圆滚滚小蓝鲸」**(DeepSeek 蓝色品牌,正视偏左 30 度);配置 `skin` 字段(`black-whale` / `blue-whale`)切换,即时生效;
+- **皮肤:双皮肤(v0.4.5)** —— **「圆滚滚小黑鲸」(v0.4.16 升级 V2:正面偏 30°、去投影、细节更丰富)** + **「圆滚滚小蓝鲸」**(DeepSeek 蓝色品牌,正视偏左 30 度);配置 `skin` 字段(`black-whale` / `blue-whale`)切换,即时生效;
 - **素材格式:动画 WebP(决策点 2 结论)** —— 由各皮肤素材库 `assets/animations/frames/*_processed.png`(RGBA,带抗锯齿半透明像素)合成,真 alpha 透明、每皮肤 ~400-470KB(比 GIF 小一半);
   - GIF 只支持二值透明,深色主题下白边明显(已实测:半透明像素=0,角点为近白透明);
   - 转换脚本:`AI桌面宠物/black-whale-petblack-whale-pet-圆滚滚小黑鲸 V1/scripts/gif2webp.py <pet-repo> <plugin-repo> <skin>`(本机 PIL 一次性转换,产物入库);
