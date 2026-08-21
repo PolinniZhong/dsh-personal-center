@@ -2,7 +2,16 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.4.5] - 2026-08-21
+
+### 新增
+- **第二皮肤「圆滚滚小蓝鲸」**(blue-whale,呼应 DeepSeek 蓝色品牌):设置 → 个人 → 宠物可切换 黑鲸 / 蓝鲸;素材按 `lib/pet-assets/<skin>/{animations,idle}/` 组织,宿主素材路由与配置 `skin` 字段支持双皮肤;即时切换,行为与黑鲸一致(5 情绪 / 常驻静止 / 情绪变化与逗弄动画)。
+
+### 变更
+- 素材目录重构:黑鲸素材迁移至 `lib/pet-assets/black-whale/`(移除旧的根目录 `animations/` `idle/` 结构)。
+
 ## [0.4.4] - 2026-08-20
+
 
 ### 变更
 - 宠物名称统一为「**圆滚滚小黑鲸**」(原「浮游小黑鲸」);
