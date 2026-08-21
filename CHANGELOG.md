@@ -2,6 +2,13 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.4.16] - 2026-08-22
+
+### 修复
+- **自定义指令"被清空"、注入不生效的根因**:旧版(≤0.4.5)宠物配置存的是布尔 `enabled: true`,而 v0.4.6 起 schema 改为 `z.string()`;DSH 0.7.0 升级后 schemastery 校验变严格,`register(personal-center-pet)` 抛错导致**同一批注册的三个命名空间全部回滚**(自定义指令 / 价格 / 宠物都读不到,UI 显示空、系统提示词不注入)。
+- **宠物 schema 兼容旧版布尔**:`enabled` 改为 `z.union([z.string(), z.boolean()])`,旧配置不再触发校验失败(显示层仍走 `normalizeEnabled` 归一化)。
+- **注册隔离**:三个命名空间逐个注册并捕获失败——今后任一命名空间的脏值只跳过自己并打印警告,绝不再连累 `custom-instructions` 一起消失。
+
 ## [0.4.15] - 2026-08-21
 
 ### 修复
