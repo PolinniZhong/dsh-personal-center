@@ -24,7 +24,9 @@
 
 **五种情绪动画**(开心 / 忙碌 / 疲惫 / 钱包痛 / 打盹):
 
-![五种情绪动画](docs/screenshots/pet-emotions.gif)
+| 黑鲸 | 蓝鲸 |
+|---|---|
+| ![黑鲸 · 五种情绪](docs/screenshots/pet-emotions.gif) | ![蓝鲸 · 五种情绪](docs/screenshots/pet-emotions-blue.gif) |
 
 | 模型成本 · 深色 |
 |---|
