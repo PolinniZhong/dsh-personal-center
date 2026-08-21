@@ -101,7 +101,7 @@ DSH 客户端没有现成 Switch 组件(实测检索),按交互色系自绘:
 |---|---|
 | 尺寸 | 36 × 20px,圆钮 16px(轨道 2px 边距) |
 | 轨道·关 | `--dsw-alias-interactive-bg-hover` |
-| 轨道·开 | `--dsw-static-deepseek-400`(品牌蓝) |
+| 轨道·开 | `--dsw-alias-brand-primary`(品牌主色,与会话库 skb-switch 一致) |
 | 圆钮 | `--dsw-alias-label-primary-foreground`(主按钮前景白)+ `box-shadow: 0 1px 2px rgba(0,0,0,.28)`;位移 `translateX(16px)` |
 | 交互 | 原生 checkbox 隐藏(absolute/opacity:0),CSS 兄弟选择器驱动轨道/圆钮;200ms ease |
 
