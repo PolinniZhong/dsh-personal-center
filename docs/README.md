@@ -11,7 +11,7 @@
 | 文档 | 回答什么问题 | 何时读 |
 |---|---|---|
 | [DESIGN.md](DESIGN.md) | 整体架构、各层机制、隐私边界、宠物设计决策 | 想理解插件怎么工作 |
-| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.4.15)与剩余项 | 想推进下一阶段 |
+| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.4.22)与剩余项 | 想推进下一阶段 |
 | [PROMOTION.md](PROMOTION.md) | 推广写作底稿:定位/卖点/事实/语气/角度/短句 | 要写文章、发帖推广 |
 | [DESKTOP-PET.md](DESKTOP-PET.md) | 桌面宠物方案与落地记录(形态/情绪/阈值校准/已知限制) | 维护宠物功能 |
 | [PLATFORM-NOTES.md](PLATFORM-NOTES.md) | DSH 平台的坑、限制、扩展点(血泪经验) | 改宿主端/客户端、遇到诡异 bug |
@@ -32,6 +32,7 @@
 | 宠物为什么平时静止 | 参考 Codex 宠物规范:idle 待机=静止,情绪变化/逗弄时才播放动画 | DESKTOP-PET |
 | 宠物为什么不能全屏移动 | 桌面端是 Tauri 宿主 + iframe,dsh 应用与宿主跨源、无 Tauri API;插件无法出窗口 | PLATFORM-NOTES |
 | 宠物素材怎么生产 | RGBA 帧 → 动画 WebP(gif2webp.py),animations/ 动作 + idle/ 待机 | DESKTOP-PET |
+| 改素材为什么看不到 | 宿主 immutable 缓存 + 素材路径不变 → 浏览器沿用旧图;素材 URL 需带 `?v=` 版本参数并递增 | PLATFORM-NOTES / DESKTOP-PET |
 
 ## 修改守则(改代码前读)
 

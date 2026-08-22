@@ -112,7 +112,7 @@ DSH 客户端没有现成 Switch 组件(实测检索),按交互色系自绘:
 - `position:fixed`,`z-index:2147483000`(低于模态);拖拽时 2147483647;
 - 默认 S 尺寸 = 80×80px 容器;素材 384×384 WebP(object-fit:contain);
 - **深色可见性**:`.dsh-pet-img.active` 加 `drop-shadow(0 0 3px rgba(140,190,255,.32))` 冷色描边光(`prefers-color-scheme:dark`);
-- 气泡:跟随主题令牌(`bg-layer-3`/`label-primary`/`border-l2`),贴顶时翻转下方(`.below`),`max-width:min(280px,60vw)`;
+- 气泡:**毛玻璃**(v0.4.20):半透明 `rgba(255,255,255,.45)`(深色 `rgba(28,30,36,.45)`)+ `backdrop-filter:blur(14px) saturate(1.5)`(-webkit- 前缀)+ 半透明描边 `rgba(255,255,255,.55)`,小尾巴同色;**无 box-shadow**;贴顶翻转(`.below`);容器**不设 overflow:hidden**(否则裁掉小尾巴);
 - 拖拽:`.dragging` 暂停动作、`scale(1.06) rotate(-3deg)` 拎起反馈、`touch-action:none`。
 
 ### 7.4 动画规范(行为即设计)
@@ -122,5 +122,6 @@ DSH 客户端没有现成 Switch 组件(实测检索),按交互色系自绘:
 | 待机 | **完全静止**(单帧静态表情),无常驻循环动画——不打扰工作(参考 Codex 宠物 idle 行) |
 | 情绪切换 | 切换时播放一次对应情绪动画(~2.2s,6 帧 WebP)后回待机;opacity .4s 交叉淡入淡出;3s 防抖 |
 | 悬停/点击 | 按当前情绪播放一次动作动画(~2.2s,6 帧 WebP)后回待机 |
+| 桌面端浮层待机 | **睡觉(dozing)**(v0.4.19):启动后宠物静止时统一显示打盹表情,动的时候才按情绪播动画(设置面板列表仍显示当前情绪静态图) |
 | 动作素材 | `animations/<emo>.webp`(循环);待机素材 `idle/<emo>.webp`(单帧,每张 ~14KB) |
 | 无障碍 | `prefers-reduced-motion` 关闭全部动画 |
