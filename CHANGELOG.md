@@ -2,6 +2,13 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.5.1] - 2026-08-22
+
+### 修复
+- **统计重复计数思考 token**:DSH 的 `outputTokens = completion_tokens` **已含**推理 token(`reasoningTokens` 是其子集,见 `dsh-llm-deepseek` 的 `mapUsage`),原统计 `input + output + cache + reasoning` 把思考部分算了两次(全量约多 267 万);现改为 `input + output + cache`。
+- **成本重复计价(同因)**:输出按 `(output - reasoning)` 计输出价、思考单独计 `reasoning` 价(缺省同输出价),不再双重计费。
+- 备注:与 DeepSeek 后台"总消耗"的差异主要不在本项——日志口径 98% 是缓存命中 token(全量 cacheRead ≈ 15.84 亿),后台口径需对照确认(见会话记录)。
+
 ## [0.5.0] - 2026-08-22
 
 ### 新增
