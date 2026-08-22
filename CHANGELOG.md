@@ -2,6 +2,14 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.6.0] - 2026-08-22
+
+### 新增
+- **会话状态概览 · 动作级实时状态**(对齐 Codex 桌面宠物):running 会话实时显示「正在读取 <文件>」/「正在执行命令 …」/「正在搜索」等动作文案;完成显示「就绪」绿徽标。
+- **动作提取**:从 `manager.get(id).getSnapshot().nodes` 的最后一条 `kind:"tool-call"` 节点取 `name` + `argsRaw`(`read`/`write`/`edit` → `file_path` 末段;`bash` → `command` 前 24 字符);思考中无 tool-call 回落「运行中」;失败优先级最高,动作文案不覆盖。
+- **实时性零新增**:沿用既有 `list.subscribe()` + `manager.get(id).subscribe()`,host `session/event` 帧(含 tool 事件)自动驱动重渲染。
+- 纯客户端改动(零 host、零端点、零轮询);冒烟测试升级至 `/tmp/pet-client-smoke7.mjs`(30 项,含动作文案/就绪徽标/思考回落/失败优先断言)。
+
 ## [0.5.1] - 2026-08-22
 
 ### 修复
