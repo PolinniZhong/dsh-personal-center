@@ -4,20 +4,23 @@
 
 ## 一句话
 
-给 DeepSeek Harness(DSH)加「个人」分区:个人资料统计(Token/工具/按模型/Token 活动)+ 全局自定义指令 + 模型成本估算 + **桌面宠物(数据驱动情绪的黑鲸)**。纯本地、插件化、不联网。
+给 DeepSeek Harness(DSH)加「个人」分区:个人资料统计(Token/工具/按模型/Token 活动)+ 全局自定义指令 + 模型成本估算 + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
 
 ## 文档导航
 
 | 文档 | 回答什么问题 | 何时读 |
 |---|---|---|
 | [DESIGN.md](DESIGN.md) | 整体架构、各层机制、隐私边界、宠物设计决策 | 想理解插件怎么工作 |
-| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.4.22)与剩余项 | 想推进下一阶段 |
+| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.5.1)与剩余项 | 想推进下一阶段 |
 | [PROMOTION.md](PROMOTION.md) | 推广写作底稿:定位/卖点/事实/语气/角度/短句 | 要写文章、发帖推广 |
 | [DESKTOP-PET.md](DESKTOP-PET.md) | 桌面宠物方案与落地记录(形态/情绪/阈值校准/已知限制) | 维护宠物功能 |
 | [PLATFORM-NOTES.md](PLATFORM-NOTES.md) | DSH 平台的坑、限制、扩展点(血泪经验) | 改宿主端/客户端、遇到诡异 bug |
-| [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) | 间距/字号/色值/组件规范 + 宠物 UI 规范 | 改 UI |
+| [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) | 间距/字号/色值/组件规范 + 宠物 UI + 会话状态面板规范 | 改 UI |
 | [DATA-MODEL.md](DATA-MODEL.md) | 会话日志格式、统计数据从哪来 | 改统计逻辑 |
 | [nav-icon-patch.md](nav-icon-patch.md) | 个人导航图标补丁怎么打、何时重打 | DSH 升级后图标变回齿轮 |
+| [宠物状态概览-设计规格与交接.md](宠物状态概览-设计规格与交接.md) | 会话状态概览的交互/视觉/轻量约束规格 + 交接提示词 | 实现/维护会话状态概览 |
+| [已发布平台.md](已发布平台.md) | 插件发布在哪些平台、PR 状态、待办 | 交接、查看发布进度 |
+| [竞争力分析.md](竞争力分析.md) | 个人工作台生态位、竞品地图、推广策略 | 写推广、做定位决策 |
 
 ## 关键结论速查
 
@@ -33,6 +36,8 @@
 | 宠物为什么不能全屏移动 | 桌面端是 Tauri 宿主 + iframe,dsh 应用与宿主跨源、无 Tauri API;插件无法出窗口 | PLATFORM-NOTES |
 | 宠物素材怎么生产 | RGBA 帧 → 动画 WebP(gif2webp.py),animations/ 动作 + idle/ 待机 | DESKTOP-PET |
 | 改素材为什么看不到 | 宿主 immutable 缓存 + 素材路径不变 → 浏览器沿用旧图;素材 URL 需带 `?v=` 版本参数并递增 | PLATFORM-NOTES / DESKTOP-PET |
+| 会话状态概览数据从哪来 | 平台已有 `sessions` 投影(useSessions),事件驱动、零轮询;失败如实标红,绝不伪装成功 | DESIGN / DESKTOP-PET |
+| 会话状态面板视觉规范 | 毛玻璃浮层(同气泡配方 v0.4.20)+ 状态色板(蓝/红/绿/灰)+ 点面板外或 ESC 关闭 | DESIGN-SYSTEM |
 
 ## 修改守则(改代码前读)
 
