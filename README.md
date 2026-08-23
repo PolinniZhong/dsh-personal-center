@@ -36,6 +36,10 @@
 |---|
 | ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
 
+| 个性化 · 按工作区(分层指令 + 模板库)|
+|---|
+| ![个性化 · 按工作区](docs/screenshots/workspace-instructions.png) |
+
 ## ✨ 功能
 
 ### 个人资料(统计)
