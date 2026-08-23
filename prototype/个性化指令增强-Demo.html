@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个性化指令增强 · Demo（per-workspace + 模板库）</title>
+<style>
+  :root{
+    --dsw-alias-label-primary:#1f2329; --dsw-alias-label-secondary:#4a5058; --dsw-alias-label-tertiary:#8a919f;
+    --dsw-alias-border-l2:#e3e6eb; --dsw-alias-bg-module-platform:#fff; --dsw-alias-bg-layer-2:#f6f7f9;
+    --dsw-alias-bg-layer-3:#f0f2f5; --dsw-alias-interactive-bg-hover:#f0f2f5;
+    --dsw-alias-state-business-primary:#4d6bfe; --dsw-alias-state-success-primary:#34c759; --dsw-alias-state-success-secondary:#eafaf0;
+    --dsw-alias-button-primary-fill:#4d6bfe; --dsw-alias-label-primary-foreground:#fff;
+  }
+  body[data-ds-dark-theme]{
+    --dsw-alias-label-primary:#e6e8eb; --dsw-alias-label-tertiary:#8b929c; --dsw-alias-border-l2:#3a414b;
+    --dsw-alias-bg-module-platform:#232a33; --dsw-alias-bg-layer-2:#1c222a; --dsw-alias-bg-layer-3:#2a323d;
+    --dsw-alias-interactive-bg-hover:#2a323d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+  .banner{background:#1f2329;color:#fff;font-size:12px;padding:7px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .banner b{color:#ffd666}
+  .banner .btn{background:#2f3540;color:#dfe3ea;border:1px solid #444b57;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer}
+  .banner .hint{color:#aab;margin-left:auto}
+  .layout{flex:1;display:flex;gap:16px;padding:16px;min-height:0;max-width:1000px;margin:0 auto;width:100%}
+
+  /* ===== 设置面板（个性化 tab）===== */
+  .panel{flex:1;background:var(--dsw-alias-bg-module-platform);border:1px solid var(--dsw-alias-border-l2);border-radius:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .p-head{padding:12px 16px;border-bottom:1px solid var(--dsw-alias-border-l2);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .p-head .src{font-size:11px;color:var(--dsw-alias-label-tertiary);font-weight:400}
+  .p-head .src b{color:var(--dsw-alias-state-business-primary)}
+  .p-tabs{display:flex;gap:2px;padding:10px 14px 0;border-bottom:1px solid var(--dsw-alias-border-l2)}
+  .p-tabs .t{font-size:12px;padding:5px 14px;cursor:pointer;color:var(--dsw-alias-label-secondary);border-radius:20px;border:1px solid transparent}
+  .p-tabs .t:hover{background:var(--dsw-alias-interactive-bg-hover)}
+  .p-tabs .t.active{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary);font-weight:600}
+  .p-body{flex:1;overflow-y:auto;padding:14px 16px}
+  .sec{display:none}
+  .sec.show{display:block}
+  .sec-title{font-size:13px;font-weight:600;margin-bottom:6px}
+  .sec-desc{font-size:11.5px;color:var(--dsw-alias-label-tertiary);margin-bottom:10px;line-height:1.6}
+
+  /* 全局 */
+  textarea{width:100%;min-height:90px;border:1px solid var(--dsw-alias-border-l2);border-radius:10px;padding:10px 12px;font-size:12.5px;font-family:ui-monospace,Menlo,monospace;line-height:1.6;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);resize:vertical}
+  textarea:focus{outline:none;border-color:var(--dsw-alias-state-business-primary)}
+  .row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+  .btn{border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-module-platform);border-radius:8px;padding:5px 14px;font-size:12px;cursor:pointer;color:var(--dsw-alias-label-primary)}
+  .btn:hover{background:var(--dsw-alias-interactive-bg-hover)}
+  .btn.primary{background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);border-color:var(--dsw-alias-button-primary-fill)}
+  .btn.small{padding:3px 10px;font-size:11px}
+  .saved{font-size:11px;color:var(--dsw-alias-state-success-primary);opacity:0;transition:opacity .3s}
+  .saved.show{opacity:1}
+
+  /* 工作区 */
+  .ws-list{display:flex;flex-direction:column;gap:8px}
+  .ws-item{border:1px solid var(--dsw-alias-border-l2);border-radius:10px;padding:10px 12px}
+  .ws-item.current{border-color:var(--dsw-alias-state-business-primary)}
+  .ws-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .ws-name{font-size:12.5px;font-weight:600}
+  .ws-tag{font-size:10.5px;padding:1px 8px;border-radius:9px;background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-tertiary)}
+  .ws-tag.current{background:#eef1ff;color:var(--dsw-alias-state-business-primary)}
+  .ws-tag.global{background:var(--dsw-alias-state-success-secondary);color:var(--dsw-alias-state-success-primary)}
+  .ws-item textarea{min-height:56px;font-size:12px}
+  .ws-empty{padding:16px;text-align:center;color:var(--dsw-alias-label-tertiary);font-size:12px;border:1px dashed var(--dsw-alias-border-l2);border-radius:10px}
+
+  /* 模板库 */
+  .tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tpl{border:1px solid var(--dsw-alias-border-l2);border-radius:12px;padding:12px 14px}
+  .tpl:hover{border-color:var(--dsw-alias-state-business-primary)}
+  .tpl-name{font-size:13px;font-weight:600;margin-bottom:4px}
+  .tpl-desc{font-size:11.5px;color:var(--dsw-alias-label-tertiary);line-height:1.5;margin-bottom:8px;min-height:34px}
+  .tpl .row{justify-content:flex-start;margin-top:0}
+  .tpl .btn.small{padding:3px 10px;font-size:11px}
+  .tpl-actions{display:flex;gap:6px}
+
+  /* 注入预览 */
+  .preview{border-top:1px solid var(--dsw-alias-border-l2);padding:12px 16px;background:var(--dsw-alias-bg-layer-2)}
+  .preview-title{font-size:11.5px;color:var(--dsw-alias-label-tertiary);margin-bottom:6px;display:flex;gap:8px;align-items:center}
+  .preview-title b{color:var(--dsw-alias-state-business-primary)}
+  .preview-box{background:var(--dsw-alias-bg-module-platform);border:1px solid var(--dsw-alias-border-l2);border-radius:10px;padding:10px 12px;font-size:11.5px;font-family:ui-monospace,Menlo,monospace;line-height:1.7;white-space:pre-wrap;color:var(--dsw-alias-label-secondary);max-height:90px;overflow-y:auto}
+  .preview-box .g{color:var(--dsw-alias-label-tertiary)}
+  .preview-box .w{color:var(--dsw-alias-state-business-primary)}
+
+  /* ===== 右侧：会话头部来源提示（P1 演示）===== */
+  .chat-side{width:280px;background:var(--dsw-alias-bg-module-platform);border:1px solid var(--dsw-alias-border-l2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;align-self:flex-start}
+  .chat-side .cs-title{font-size:12px;font-weight:600}
+  .chat-head-mock{border:1px solid var(--dsw-alias-border-l2);border-radius:10px;padding:10px 12px;font-size:12px;display:flex;align-items:center;gap:8px}
+  .chat-head-mock .tag{font-size:10.5px;padding:1px 8px;border-radius:9px;background:#eef1ff;color:var(--dsw-alias-state-business-primary);cursor:pointer}
+  .cs-note{font-size:11px;color:var(--dsw-alias-label-tertiary);line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <b>个性化指令增强 · Demo</b>
+  <span>分层模式（参考 Codex AGENTS.md / CLAUDE.md / Cursor Rules）：全局 + 按工作区 + 模板库 + 注入预览</span>
+  <button class="btn" onclick="switchWs(0)">模拟：切到 03_日常对话</button>
+  <button class="btn" onclick="switchWs(1)">模拟：切到 Omi-DSH 端到端</button>
+  <span class="hint">切换工作区看指令与预览联动 · 点模板「应用到…」试试</span>
+</div>
+
+<div class="layout">
+  <!-- 设置面板：个性化 tab -->
+  <div class="panel">
+    <div class="p-head">✨ 个性化
+      <span class="src">当前会话工作区：<b id="curWs">03_日常对话</b></span>
+    </div>
+    <div class="p-tabs">
+      <div class="t active" onclick="showTab('global',this)">全局指令</div>
+      <div class="t" onclick="showTab('ws',this)">按工作区</div>
+      <div class="t" onclick="showTab('tpl',this)">模板库</div>
+    </div>
+    <div class="p-body">
+      <!-- 全局 -->
+      <div class="sec show" id="sec-global">
+        <div class="sec-title">全局指令（身份基线）</div>
+        <div class="sec-desc">对所有会话生效；未配置工作区指令时，这是唯一注入的指令。</div>
+        <textarea id="globalText">我是 AI 产品经理，负责 DSH 插件产品。回答时先给结论再给依据，用中文，简洁、结构化，涉及文档时用 Markdown。</textarea>
+        <div class="row"><span class="saved" id="gSaved">✓ 已保存</span><button class="btn primary" onclick="save('global')">保存</button></div>
+      </div>
+      <!-- 按工作区 -->
+      <div class="sec" id="sec-ws">
+        <div class="sec-title">按工作区指令（项目适配）</div>
+        <div class="sec-desc">自动按会话所在工作区注入；未配置的工作区回退用全局指令。</div>
+        <div class="ws-list" id="wsList"></div>
+        <div class="row"><button class="btn" onclick="addWs()">＋ 添加工作区</button></div>
+      </div>
+      <!-- 模板库 -->
+      <div class="sec" id="sec-tpl">
+        <div class="sec-title">指令模板库（一键复用）</div>
+        <div class="sec-desc">把常用人设存成模板，一键应用到全局或指定工作区。</div>
+        <div class="tpl-grid" id="tplGrid"></div>
+      </div>
+    </div>
+    <!-- 注入预览 -->
+    <div class="preview">
+      <div class="preview-title">注入预览（<b id="pvWs">03_日常对话</b> 会话将收到）<span id="pvTokens" style="margin-left:auto;color:var(--dsw-alias-label-tertiary)"></span></div>
+      <div class="preview-box" id="previewBox"></div>
+    </div>
+  </div>
+
+  <!-- 右侧：会话头部来源提示（P1） -->
+  <div class="chat-side">
+    <div class="cs-title">P1 演示：来源提示</div>
+    <div class="chat-head-mock">💬 会话标题 <span class="tag" id="srcTag" onclick="document.querySelector('.p-tabs .t:nth-child(2)').click()">指令:工作区</span></div>
+    <div class="cs-note">会话头部轻量徽标，显示当前注入来源（全局 / 工作区X）；点击可跳转个性化设置。正常情况低调不打扰。</div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let ws=[
+  {path:'/…/03_日常对话', name:'03_日常对话', text:'本工作区做 DSH 插件产品规划与文档。语气务实，输出带版本号与待办清单；涉及需求评审时按「价值×成本×风险」结构。'},
+  {path:'/…/Omi-DSH 端到端', name:'Omi-DSH 端到端', text:'本工作区做语音端到端。回答侧重工程实现细节，给出代码与验证步骤，标注兼容性与已知坑。'},
+  {path:'/…/0820', name:'0820', text:''},
+];
+let curWs=0;
+const TEMPLATES=[
+  {name:'产品经理', desc:'结论先行、价值×成本×风险、PRD 结构化、带优先级', text:'你是资深 AI 产品经理。回答先给结论再给依据；分析按「价值×成本×风险」；文档用 Markdown 结构化并带优先级。'},
+  {name:'开发者', desc:'工程细节、代码+验证步骤、兼容性、已知坑', text:'你是资深工程师。回答给可运行的代码与验证步骤，标注兼容性与已知坑，语言精炼。'},
+  {name:'写作', desc:'结构化写作、简洁、避免废话', text:'你是专业写作者。输出结构清晰、简洁有力，避免空话套话，按目标读者调整语气。'},
+  {name:'翻译', desc:'中英互译、保留格式、术语一致', text:'你是专业翻译。中英互译，保留原格式与术语一致性，专有名词首次出现附原文。'},
+];
+
+function showTab(name,el){
+  document.querySelectorAll('.p-tabs .t').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('show'));
+  $('sec-'+name).classList.add('show');
+}
+function renderWs(){
+  $('wsList').innerHTML = ws.map((w,i)=>`
+    <div class="ws-item ${i===curWs?'current':''}">
+      <div class="ws-top">
+        <span class="ws-name">${w.name}</span>
+        <span class="ws-tag ${i===curWs?'current':''}">${i===curWs?'当前会话工作区':'未使用'}</span>
+        ${w.text?`<span class="ws-tag global">已配置</span>`:`<span class="ws-tag">回退全局</span>`}
+      </div>
+      <textarea data-i="${i}" placeholder="该工作区的指令（留空 = 使用全局指令）">${w.text}</textarea>
+      <div class="row" style="margin-top:6px">
+        <button class="btn small" data-clear="${i}">清空（回退全局）</button>
+        <button class="btn small primary" data-savews="${i}">保存</button>
+        <span class="saved" id="wsSaved${i}">✓ 已保存</span>
+      </div>
+    </div>`).join('');
+  document.querySelectorAll('#wsList textarea').forEach(ta=>{
+    ta.addEventListener('input',()=>{ ws[+ta.dataset.i].text=ta.value; updatePreview(); });
+  });
+  document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',()=>{ ws[+b.dataset.clear].text=''; renderWs(); updatePreview(); flash('已清空，该工作区回退全局'); }));
+  document.querySelectorAll('[data-savews]').forEach(b=>b.addEventListener('click',()=>{ const s=$('wsSaved'+b.dataset.savews); s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),1500); updatePreview(); }));
+}
+function renderTpl(){
+  $('tplGrid').innerHTML = TEMPLATES.map((t,i)=>`
+    <div class="tpl">
+      <div class="tpl-name">${t.name}</div>
+      <div class="tpl-desc">${t.desc}</div>
+      <div class="row tpl-actions">
+        <button class="btn small primary" onclick="applyTpl(${i},'global')">应用到全局</button>
+        <button class="btn small" onclick="applyTpl(${i},'ws')">应用到 ${ws[curWs].name}</button>
+      </div>
+    </div>`).join('');
+}
+function applyTpl(i, target){
+  const t=TEMPLATES[i];
+  if(target==='global'){ $('globalText').value=t.text; showTab('global',document.querySelector('.p-tabs .t')); }
+  else { ws[curWs].text=t.text; renderWs(); }
+  updatePreview();
+  flash('已应用模板「'+t.name+'」');
+}
+function updatePreview(){
+  const g=$('globalText').value, w=ws[curWs].text;
+  $('pvWs').textContent = ws[curWs].name;
+  $('curWs').textContent = ws[curWs].name;
+  $('srcTag').textContent = w?'指令:工作区':'指令:全局';
+  $('pvTokens').textContent = '≈ ' + Math.ceil((g+w).length/4) + ' tokens';
+  $('previewBox').innerHTML = `<span class="g">${escapeHtml(g)}</span>` + (w?`\n\n<span class="w">【${ws[curWs].name]}】${escapeHtml(w)}</span>`:'');
+}
+function save(which){
+  const s=which==='global'?'gSaved':'gSaved';
+  $('gSaved').classList.add('show'); setTimeout(()=>$('gSaved').classList.remove('show'),1500);
+  updatePreview();
+}
+function switchWs(i){ curWs=i; renderWs(); renderTpl(); updatePreview(); }
+function addWs(){ const name='新工作区'+(ws.length+1); ws.push({path:'/…/'+name,name,text:''}); renderWs(); updatePreview(); flash('已添加，留空=回退全局'); }
+function flash(msg){ alert('✅ '+msg); }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+renderWs(); renderTpl(); updatePreview();
+</script>
+</body>
+</html>
