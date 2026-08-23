@@ -22,6 +22,10 @@
 |---|---|
 | ![宠物 · 浅色](docs/screenshots/light-pet.png) | ![宠物 · 深色](docs/screenshots/dark-pet.png) |
 
+| 会话状态概览 · 深色 |
+|---|
+| ![会话状态概览](docs/screenshots/pet-status-overview.png) |
+
 **五种情绪动画**(开心 / 忙碌 / 疲惫 / 钱包痛 / 打盹):
 
 | 黑鲸 | 蓝鲸 |
