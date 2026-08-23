@@ -5,11 +5,15 @@
 ## [0.7.0] - 2026-08-22
 
 ### 新增(个性化指令增强,PRD:docs/个性化指令增强-PRD.md)
-- **按工作区指令**:新命名空间 `personal-center-instructions`(JSON 字符串,同 pricing 先例,坏 JSON 容错);provider 升级为按会话 **cwd 最长前缀匹配**工作区,有匹配注入「全局 + 工作区」合并文本,无匹配仅全局(与 v0.5.1 行为一致);子代理继承父 cwd 自动生效;
+- **按工作区指令**:新命名空间 `personal-center-instructions`(JSON 字符串,同 pricing 先例,坏 JSON 容错);注入按会话 **cwd 最长前缀匹配**工作区,有匹配注入「全局 + 工作区」合并文本,无匹配仅全局(与 v0.5.1 行为一致);子代理继承父 cwd 自动生效;
 - **指令模板库**:内置 5 个模板(产品经理/开发者/写作/翻译/通用助手)+ 自定义模板(存为模板/编辑/删除),一键应用到全局或当前工作区;
 - **注入预览**:个性化 tab 底部实时显示「全局 + 当前工作区」合并文本 + ≈token 估算,随切换联动;
 - **个性化 tab 重构**:三子区(全局/按工作区/模板库)+ 工作区自动发现(`/personal-center/workspaces`)与手动添加、当前工作区高亮;
 - 新路由:`GET/POST /personal-center/instructions`、`GET /personal-center/current-workspace`(最近活动会话 cwd,一次性非轮询)、`GET /personal-center/workspaces`。
+
+### 平台适配(0.7.0 实测)
+- **注入通道变更**:0.7.0 将 `systemPrompt` 服务收进 agent scope,第三方插件无法再通过 `systemPrompt.section/variable` 注册(注册回调不执行或抛错);改用 `system-prompt/assemble` **waterfall 事件**在组装结果里插入 custom-instructions 段(竞品 dsh-prompt-persona 同通道),实测注入生效(见 PLATFORM-NOTES §14);
+- **失效预案**:事件监听 try/catch + 空值短路,通道失效自动降级为"不注入",不影响其它功能。
 
 ### 兼容
 - 现有 `custom-instructions` 命名空间与数据**无缝延续**(不迁移、不丢配置);未配置任何工作区指令时行为与旧版完全一致;纯本地零网络零新依赖、不改核心。

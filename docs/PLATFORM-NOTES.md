@@ -130,3 +130,29 @@ ctx.slots.inject("settings.section", () => ctx.slots.register({
 - 升级后 profile 依赖可能尚未解析,启动报 `cannot resolve profile bundle "xxx" ... run 'dsh plugin --profile web install'`——桌面端会自动补装(实测 0.6.x→0.7.0 时 dsh-session-kb 反复启动失败后自动恢复);
 - **宿主端插件在每次启动时重新注册命名空间**,升级=新核心代码+新校验规则,是存量数据问题集中暴露的时刻(见第 12 条);
 - 排查路径:启动失败栈在 `logs/desktop.log`(带 `dsh:` 前缀的 stderr)与 `logs/dsh-web.log`(.1/.2 轮转);`lsof -p <harness pid>` 可确认进程实际打开的 settings.yaml;`~/.dsh/.harness.pid` 记录当前 pid 与端口。
+
+## 14. 第三方注入系统提示词:只有 assemble 事件通道(0.7.0 实测)
+
+**0.7.0 关闭了第三方注册通道**:
+- `systemPrompt` 服务被收进 **agent scope**(`dsh-persona` 源码注释:apply ctx 必须是 agent scope context);profile 层插件:
+  - `ctx.inject(["systemPrompt", ...])` 回调**永不执行**(provider 从未被调用,实测);
+  - `ctx.get("systemPrompt")`(strict)与 `ctx.systemPrompt` 属性访问在 apply 时**抛错** → 插件加载失败 → **阻塞 Harness 启动**(实测两次,勿再使用)。
+- 官方 `{{cwd}}`/`{{provider}}` 等 variable 由 agent-loop 在 **agent scope ctx** 注册(`ctx.systemPrompt.variable(...)`,其 ctx = agent 会话 scope),第三方无法照抄。
+
+**唯一可用通道:`system-prompt/assemble` waterfall 事件**(竞品 dsh-prompt-persona 同款,实测生效):
+
+```js
+ctx.on("system-prompt/assemble", async (assembly, context, next) => {
+  const result = await next();                       // 先走完其它监听器
+  // result.sections = [{name, text}, ...](已按 order 排序,无 order 字段)
+  // 直接插入/更新自己的 section(写最终文本,勿用 {{变量}} 模板——无变量注册会插值失败)
+  // context.agent.session.header.cwd 与官方 {{cwd}} 同源,可做 cwd 匹配
+  return result;
+});
+```
+
+要点:
+- **untagged 全局监听器覆盖所有 agent scope**(scopeTarget 放行),profile 层可监听 agent 组装;
+- 插入位置:`splice(1, 0, section)`(紧跟第一个身份段之后);空文本直接不插入/移除;
+- **失效预案**:监听器内 try/catch + 空值短路,通道失效时自动降级为"不注入",不影响其它功能;
+- **风险**:waterfall 事件可能随内核调整再次失效(0.6→0.7 已变过一次);失效后需重新寻找通道或等官方 agent 级插件机制;竞品 dsh-prompt-persona / dsh-forge(运行时注入器)同在验证此通道。
