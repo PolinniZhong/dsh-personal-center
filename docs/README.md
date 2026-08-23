@@ -4,15 +4,17 @@
 
 ## 一句话
 
-给 DeepSeek Harness(DSH)加「个人」分区:个人资料统计(Token/工具/按模型/Token 活动)+ 全局自定义指令 + 模型成本估算 + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
+给 DeepSeek Harness(DSH)加「个人」分区:个人资料统计(Token/工具/按模型/Token 活动)+ **个性化分层指令(全局 + 按工作区 + 模板库 + 注入预览)** + 模型成本估算 + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
 
 ## 文档导航
 
 | 文档 | 回答什么问题 | 何时读 |
 |---|---|---|
+| [../AGENTS.md](../AGENTS.md) | **项目长期记忆**:已确认需求约定 + 关键实现事实(每次必读) | 任何开发/修改前 |
 | [DESIGN.md](DESIGN.md) | 整体架构、各层机制、隐私边界、宠物设计决策 | 想理解插件怎么工作 |
-| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.5.1)与剩余项 | 想推进下一阶段 |
+| [PLAN.md](PLAN.md) | 里程碑、决策点、发布状态(v0.7)与剩余项 | 想推进下一阶段 |
 | [PROMOTION.md](PROMOTION.md) | 推广写作底稿:定位/卖点/事实/语气/角度/短句 | 要写文章、发帖推广 |
+| [个性化指令增强-PRD.md](个性化指令增强-PRD.md) | 分层指令(全局+按工作区+模板库+预览)的产品需求与验证结论 | 维护/扩展个性化功能 |
 | [DESKTOP-PET.md](DESKTOP-PET.md) | 桌面宠物方案与落地记录(形态/情绪/阈值校准/已知限制) | 维护宠物功能 |
 | [PLATFORM-NOTES.md](PLATFORM-NOTES.md) | DSH 平台的坑、限制、扩展点(血泪经验) | 改宿主端/客户端、遇到诡异 bug |
 | [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) | 间距/字号/色值/组件规范 + 宠物 UI + 会话状态面板规范 | 改 UI |
@@ -30,7 +32,8 @@
 | 统计读日志为何要自写 zstd 帧扫描 | `node:zlib` 只解第一帧,追加式日志是多帧拼接 | PLATFORM-NOTES / DATA-MODEL |
 | 图标补丁为何会消失 | `dependencies/dsh` 由发布源整树下载,升级覆盖 | nav-icon-patch |
 | 深浅色怎么适配 | 全用 `--dsw-alias-*` 主题令牌,图标用 `currentColor` | DESIGN-SYSTEM |
-| 个性化数据存哪 | `settings.yaml` 的 `custom-instructions.text`,经自有路由读写 | DESIGN.md |
+| 个性化数据存哪 | `settings.yaml`:全局 `custom-instructions.text`;工作区+模板 `personal-center-instructions`(JSON) | DESIGN.md / AGENTS.md |
+| 个性化指令怎么注入 | 0.7.0 关闭 `systemPrompt` 服务注册后,走 `system-prompt/assemble` 事件在组装结果里插段;**勿用 systemPrompt 服务注册** | PLATFORM-NOTES §14 |
 | 统计隐私边界 | 只聚合数字,不读正文;路由仅回环 | DESIGN.md / PRIVACY.md |
 | 宠物为什么平时静止 | 参考 Codex 宠物规范:idle 待机=静止,情绪变化/逗弄时才播放动画 | DESKTOP-PET |
 | 宠物为什么不能全屏移动 | 桌面端是 Tauri 宿主 + iframe,dsh 应用与宿主跨源、无 Tauri API;插件无法出窗口 | PLATFORM-NOTES |

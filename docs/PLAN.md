@@ -123,6 +123,8 @@ M3 合流,一次重启验证。
 - v0.4.16:修复自定义指令"被清空/不生效"——旧版宠物布尔 `enabled` 触发 0.7.0 严格 schema 校验失败,连带回滚全部命名空间注册;schema 兼容布尔 + 注册隔离(见 PLATFORM-NOTES §12);
 - v0.5.0:会话状态概览——悬停宠物右上角「会话状态」按钮(或点击宠物)→ 毛玻璃面板实时列出会话状态(运行中/失败/已完成/待机 + 摘要计数);打开面板隐藏数据气泡、退出后恢复;失败如实标红(绝不伪装绿色成功);数据来自平台 `sessions` 投影,事件驱动、零轮询;点面板外或 ESC 关闭;
 - v0.5.1:统计修正——`outputTokens` 已含 reasoning,思考 token 不再重复计数,成本同因去重;npm 发布 `dsh-personal-center@0.5.1`;
+- v0.6.0:会话状态概览·动作级实时状态——running 会话实时显示「正在读取/执行命令/搜索」等动作文案,完成显示「就绪」绿徽标(对齐 Codex 桌面宠物);
+- **v0.7.0:个性化指令增强**(本版收口,PRD:docs/个性化指令增强-PRD.md)——个性化从"一条全局指令"升级为**分层体系**:全局(身份基线)+ 按工作区(cwd 最长前缀自动注入「全局+工作区」合并文本)+ 指令模板库(内置 5 个 + 自定义 + 一键「应用」)+ 注入预览(内联「指令应用示例」);因 0.7.0 把 systemPrompt 收进 agent scope,注入改用 `system-prompt/assemble` 事件通道(见 PLATFORM-NOTES §14);经用户多轮 UI 评审打磨(下拉选择器、模板独立框、路径短显示、标签清淡、点外部关闭等),交互约定沉淀至 AGENTS.md;
 - 宠物设计与实现细节见 [DESKTOP-PET.md](DESKTOP-PET.md) 与 [DESIGN.md](DESIGN.md)。
 
 ### 宠物剩余项(按优先级)
@@ -136,15 +138,14 @@ M3 合流,一次重启验证。
 | 阈值设置项 | `PET_THRESHOLDS` 内置不可调 | 低 |
 | USD 币种钱包痛阈值 | 现为 ¥10 人民币语义 | 低 |
 
-### 发布状态(已发布 v0.5.1)
+### 发布状态(已发布 v0.7.0)
 
 - ✅ GitHub 仓库:https://github.com/PolinniZhong/dsh-personal-center(本地与远端同步,活跃维护)
-- ✅ npm:https://www.npmjs.com/package/dsh-personal-center(`dsh-personal-center@0.5.1`,repository 指回 GitHub)
+- ✅ npm:https://www.npmjs.com/package/dsh-personal-center(`dsh-personal-center`,repository 指回 GitHub)
 - ✅ 官方展示帖:https://github.com/deepseek-ai/deepseek-harness/discussions/3595(`Show Your Plugins!`)
-- ✅ 主发布帖 https://github.com/deepseek-ai/deepseek-harness/discussions/3449 已更新至 v0.4.16(含版本历史 v0.1→v0.4.16)
-- ✅ 截图(宠物面板浅色/深色 + 五种情绪 GIF)已入 `docs/screenshots/`
+- ✅ 主发布帖 https://github.com/deepseek-ai/deepseek-harness/discussions/3449 已更新至 **v0.7**(含版本历史 v0.1→v0.7)
+- ✅ 截图(宠物面板浅色/深色 + 五种情绪 GIF + **按工作区分层指令**)已入 `docs/screenshots/`
 - ✅ 2026-08-22:0.7.0 升级后 nav-icon 补丁已重打(见 docs/nav-icon-patch.md)
 - ⏳ awesome-dsh-plugin 收录 PR #2741(CI 已通过,待维护者合并;合并后 dsh-market 自动同步)
 - ✅ 发布记录:docs/已发布平台.md(GitHub / npm / 展示帖 / awesome PR / dsh-market 同步路径)
 - ⏳ 可选:仓库 About 区补 description + topics(`dsh-plugin` / `deepseek-harness` / `personal-center` / `usage-stats` / `desktop-pet` / `session-status`)
-- ⏳ 可选:仓库 About 区补 description + topics(`dsh-plugin` / `deepseek-harness` / `personal-center`)
