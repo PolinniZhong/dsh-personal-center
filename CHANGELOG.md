@@ -2,6 +2,26 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.8.0] - 2026-08-25
+
+### 新增
+- **桌宠 5 个新动作素材**(黑鲸 + 蓝鲸,豆包生成 → `gif2webp-new-actions.py` 合成,素材版本 `?v=v5`):
+  - 情绪态:thinking(思考中)/ waiting(等你回复)/ celebrate(完成庆祝);
+  - 交互触发:drag(拖拽小碎步)/ wave(点击打招呼);
+- **会话状态情绪实时驱动**(常驻同步器,脱离面板):
+  - 宠物启用即订阅 `sessions.list`,thinking/waiting/celebrate 不依赖打开会话概览面板;
+  - 情绪优先级:失败 exhausted > 等你回复 waiting > 思考中 thinking > 忙碌 busy;
+  - **情绪锁仲裁**:会话有活动时锁定(实时状态优先),stats 用量轮询不覆盖;会话空闲解锁,立即恢复 stats 情绪(不等 30s);
+  - **完成庆祝**:running 下降沿(运行→停止且无失败)触发 celebrate 动画(不依赖 completed 标志——该标志对当前选中会话不置位);
+  - **持续情绪**:thinking/waiting 播完动画保持对应待机帧,不被拉回睡觉。
+
+### 修复
+- 素材路由白名单扩展:`PET_EMOTION_NAMES` 扩为 10 个,路由改动态解析 + 三重白名单校验(防路径穿越不变);
+- 对抗式审查 3 个边界 bug:解锁后情绪卡顿(立即恢复 stats)/ celebrate 被覆盖(延后播)/ 拖拽结束误回睡觉(persistent 帧)。
+
+### 文档
+- 已发布平台更新(awesome-dsh-plugin 收录 PR #2741 已合并,2135→2136 条);宠物状态概览规格补 v0.6 迭代引用。
+
 ## [0.7.0] - 2026-08-22
 
 ### 新增(个性化指令增强,PRD:docs/个性化指令增强-PRD.md)

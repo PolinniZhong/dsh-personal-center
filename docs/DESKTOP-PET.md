@@ -75,6 +75,18 @@
 - 情绪映射 失败→着急(exhausted)/ 运行中→busy / 完成→happy / 空闲→dozing;
 - 交互规格与 M0 验证结论见 `docs/宠物状态概览-设计规格与交接.md`;v0.6 迭代规格见 `状态卫士/宠物状态概览-动作级实时状态-设计规格.md`;冒烟测试 `/tmp/pet-client-smoke7.mjs`(30 项)。
 
+## 6.6 新动作与会话情绪驱动(v0.8.0)
+
+- **5 个新动作素材**(黑鲸 + 蓝鲸,素材版本 `?v=v5`):
+  - 情绪态:thinking(思考中)/ waiting(等你回复)/ celebrate(完成庆祝);
+  - 交互触发:drag(拖拽小碎步)/ wave(点击打招呼);
+- **会话状态情绪实时驱动(常驻,不依赖面板)**:
+  - 宠物启用即订阅 `sessions.list`,thinking/waiting/celebrate 实时生效;
+  - 优先级:失败 exhausted > 等你回复 waiting > 思考中 thinking > 忙碌 busy;
+  - **情绪锁仲裁**:会话有活动时锁定(会话实时状态优先),stats 用量轮询不覆盖;会话空闲解锁并立即恢复 stats 情绪;
+  - **完成庆祝**:running 下降沿(运行→停止且无失败)触发 celebrate(completed 标志对当前选中会话不置位,故不依赖它);
+  - **持续情绪**:thinking/waiting 播完动画保持对应待机帧,不被拉回睡觉。
+
 ## 7. 已知限制与下一步
 
 - **全屏移动不可行**:桌面端是 Tauri 宿主 + iframe,插件无法出 DSH 窗口(架构证据见 PLATFORM-NOTES §11);要全屏需 DSH 官方浮层能力或独立小应用;
