@@ -60,7 +60,10 @@
 
 ## 5. 版本状态
 
-- 当前主线 **v0.7.0(已发布收口,2026-08-23)**:个性化指令增强(全局 + 按工作区 + 模板库 +
-  注入预览,事件通道注入已实测生效);GitHub 已推送、Discussions #3449 已更新至 v0.7。
-- v0.8 候选:条件注入(按模型/任务/文件/时段)、模板导入导出。
-- 发布节奏:功能验证通过后提交推送 GitHub(代理 127.0.0.1:7897)+ 更新官方 Discussions #3449。
+- 当前主线 **v0.8.1(已发布收口,2026-08-25)**:
+  - **v0.8.0**:桌宠 5 个新动作(thinking/waiting/celebrate/drag/wave,黑鲸+蓝鲸)+ 会话状态情绪实时驱动(常驻同步器、情绪锁仲裁 stats 不覆盖、完成庆祝走 running 下降沿、持续情绪不回落);素材路由白名单扩 10 + 动态解析;对抗式审查修复 3 个边界 bug;素材版本 `?v=v5`。
+  - **v0.8.1**:README 新增动作并排 GIF;GitHub topics 补 desktop-pet/pet/desktop-companion;npm keywords 同步。
+  - 前置 **v0.7.0**(2026-08-23):个性化指令增强(全局+按工作区+模板库+注入预览,事件通道注入实测生效)。
+- 桌宠素材管线:豆包生成 GIF → `AI桌面宠物/<skin>/assets/animations/<action>/frames_processed/` → `gif2webp-new-actions.py` 合成 WebP → 插件 `lib/pet-assets/<skin>/{animations,idle}/`;新动作规格见 `状态卫士/桌宠v0.7-新增4动作-素材生成规格.md`。
+- 后续候选:条件注入(按模型/任务/文件/时段)、模板导入导出、桌宠更多情绪。
+- 发布节奏:功能验证通过后提交推送 GitHub(代理 127.0.0.1:7897)+ 更新官方 Discussions #3449;npm 发布需用户确认。
