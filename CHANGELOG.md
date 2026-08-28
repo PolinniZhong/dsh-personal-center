@@ -2,6 +2,13 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.8.1] - 2026-08-25
+
+### 变更
+- **README 展示新增动作**:黑鲸/蓝鲸各一张并排 GIF(思考中 / 等你回复 / 完成庆祝 / 拖拽 / 点击打招呼),让用户直观看到 v0.8.0 新动作;
+- **GitHub topics 补充桌面宠物标签**:新增 `desktop-pet` / `pet` / `desktop-companion`(此前只有 deepseek-harness / dsh-plugin / dsh-plugins,用户搜不到桌面宠物);
+- **npm keywords 同步**:`pet` / `desktop-companion` 补入,提升 npm 站内可发现性。
+
 ## [0.8.0] - 2026-08-25
 
 ### 新增
