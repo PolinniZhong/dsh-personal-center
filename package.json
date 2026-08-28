@@ -23,7 +23,9 @@
     "plugin",
     "personal-center",
     "desktop-pet",
-    "session-status"
+    "session-status",
+    "pet",
+    "desktop-companion"
   ],
   "repository": {
     "type": "git",

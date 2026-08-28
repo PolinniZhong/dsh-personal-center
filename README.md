@@ -32,6 +32,12 @@
 |---|---|
 | ![黑鲸 · 五种情绪](docs/screenshots/pet-emotions.gif) | ![蓝鲸 · 五种情绪](docs/screenshots/pet-emotions-blue.gif) |
 
+**新增动作( v0.8.0 )**(思考中 / 等你回复 / 完成庆祝 / 拖拽 / 点击打招呼):
+
+| 黑鲸 | 蓝鲸 |
+|---|---|
+| ![黑鲸 · 新增动作](docs/screenshots/pet-new-actions-black-whale.gif) | ![蓝鲸 · 新增动作](docs/screenshots/pet-new-actions-blue-whale.gif) |
+
 | 模型成本 · 深色 |
 |---|
 | ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
