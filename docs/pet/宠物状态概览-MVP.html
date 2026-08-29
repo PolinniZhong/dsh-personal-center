@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宠物状态概览 · MVP 原型 v0.2（毛玻璃 + 点击外部关闭）</title>
+<style>
+  /* ===== DSH 设计令牌（铁律：只用 --dsw-alias-*；随 body[data-ds-dark-theme] 自适应）===== */
+  :root{
+    --dsw-alias-label-primary:#1f2329;
+    --dsw-alias-label-secondary:#4a5058;
+    --dsw-alias-label-tertiary:#8a919f;
+    --dsw-alias-label-caption:#aab1bd;
+    --dsw-alias-border-l2:#e3e6eb;
+    --dsw-alias-bg-module-platform:#ffffff;
+    --dsw-alias-bg-layer-2:#f6f7f9;
+    --dsw-alias-bg-layer-3:#f0f2f5;
+    --dsw-alias-interactive-bg-hover:#f0f2f5;
+    --dsw-alias-state-business-primary:#4d6bfe;
+    --dsw-alias-state-error-primary:#ff4d4f;
+    --dsw-alias-state-success-primary:#34c759;
+    --dsw-alias-state-success-secondary:#eafaf0;
+    --dsw-alias-bg-inverse:#1f2329;
+    --pc-state-error-soft:#fff1f0;
+    --pc-state-business-soft:#eef1ff;
+  }
+  body[data-ds-dark-theme]{
+    --dsw-alias-label-primary:#e6e8eb;
+    --dsw-alias-label-tertiary:#8b929c;
+    --dsw-alias-border-l2:#3a414b;
+    --dsw-alias-bg-module-platform:#232a33;
+    --dsw-alias-bg-layer-2:#1c222a;
+    --dsw-alias-bg-layer-3:#2a323d;
+    --dsw-alias-interactive-bg-hover:#2a323d;
+    --pc-state-error-soft:#3a2628;
+    --pc-state-business-soft:#232c4d;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-primary);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+  .banner{background:var(--dsw-alias-bg-inverse);color:#fff;font-size:12px;padding:7px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .banner b{color:#ffd666}
+  .banner .btn{background:#2f3540;color:#dfe3ea;border:1px solid #444b57;border-radius:6px;padding:3px 11px;font-size:11px;cursor:pointer}
+  .banner .btn:hover{background:#3a414d}
+  .banner .hint{color:#aab;margin-left:auto}
+
+  .layout{flex:1;position:relative;background:var(--dsw-alias-bg-layer-2)}
+  .chat{max-width:520px;margin:24px auto;background:var(--dsw-alias-bg-module-platform);border:1px solid var(--dsw-alias-border-l2);border-radius:12px;padding:16px;font-size:12.5px;color:var(--dsw-alias-label-tertiary);line-height:1.9}
+
+  /* ===== 宠物（含激活态） ===== */
+  .pet{position:fixed;right:22px;bottom:18px;width:88px;text-align:center;cursor:pointer;user-select:none;z-index:60;border-radius:16px;padding:4px;transition:background .2s}
+  .pet.active{background:var(--dsw-alias-interactive-bg-hover)}
+  .pet .bubble{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);
+    /* 毛玻璃：宠物气泡同款配方（深浅各一套） */
+    background:rgba(255,255,255,.45);-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+    color:var(--dsw-alias-label-primary);border:1px solid rgba(255,255,255,.55);padding:10px 16px;border-radius:16px;
+    font-size:13px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:min(280px,60vw);display:block}
+  .pet .bubble.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .pet .bubble b{color:var(--dsw-alias-state-error-primary)}
+  .pet .bubble.ok b{color:var(--dsw-alias-state-business-primary)}
+  .pet .bubble.good b{color:var(--dsw-alias-state-success-primary)}
+  .pet .bubble::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:rgba(255,255,255,.45)}
+  body[data-ds-dark-theme] .pet .bubble{background:rgba(28,30,36,.45);border-color:rgba(255,255,255,.14)}
+  body[data-ds-dark-theme] .pet .bubble::after{border-top-color:rgba(28,30,36,.45)}
+  @keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+  .pet .face{font-size:44px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15));transition:transform .3s}
+  .pet.busy .face{animation:wobble 1.2s infinite}
+  .pet.worried .face{animation:shake .6s infinite}
+  @keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+  .pet .pet-name{font-size:10.5px;color:var(--dsw-alias-label-tertiary);margin-top:3px}
+  .pet .hint-line{font-size:10px;color:var(--dsw-alias-label-tertiary);margin-top:2px;display:none}
+  .pet:hover .hint-line{display:block}
+
+  /* ===== 概要面板：毛玻璃浮层（宠物弹窗同款配方，弱一点不明显） ===== */
+  .panel{position:fixed;right:22px;bottom:122px;width:320px;
+    background:rgba(255,255,255,.45);-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+    color:var(--dsw-alias-label-primary);border:1px solid rgba(255,255,255,.55);border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);overflow:hidden;display:none;z-index:60}
+  body[data-ds-dark-theme] .panel{background:rgba(28,30,36,.45);border-color:rgba(255,255,255,.14)}
+  .panel.show{display:block;animation:pop .2s}
+  .panel .p-head{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.35);font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;color:var(--dsw-alias-label-primary)}
+  body[data-ds-dark-theme] .panel .p-head{border-bottom-color:rgba(255,255,255,.1)}
+  .panel .p-head .esc-hint{margin-left:auto;font-size:10px;color:var(--dsw-alias-label-tertiary);font-weight:400}
+  .panel .p-sum{display:flex;gap:16px;padding:12px 16px 6px;font-size:11px;color:var(--dsw-alias-label-tertiary)}
+  .panel .p-sum .n{font-size:20px;font-weight:600}
+  .panel .p-sum .running{color:var(--dsw-alias-state-business-primary)}
+  .panel .p-sum .failed{color:var(--dsw-alias-state-error-primary)}
+  .panel .p-sum .done{color:var(--dsw-alias-state-success-primary)}
+  .p-list{padding:8px 10px 12px;max-height:260px;overflow-y:auto}
+  .p-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;font-size:12px;color:var(--dsw-alias-label-primary)}
+  .p-item:hover{background:var(--dsw-alias-interactive-bg-hover)}
+  .p-item .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .p-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dsw-alias-label-primary)}
+  .p-item .st{font-size:11px;padding:1px 8px;border-radius:9px}
+  .st.running{background:var(--pc-state-business-soft);color:var(--dsw-alias-state-business-primary)}
+  .st.failed{background:var(--pc-state-error-soft);color:var(--dsw-alias-state-error-primary)}
+  .st.done{background:var(--dsw-alias-state-success-secondary);color:var(--dsw-alias-state-success-primary)}
+  .st.idle{background:var(--dsw-alias-bg-layer-3);color:var(--dsw-alias-label-tertiary)}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <b>宠物状态概览 · MVP v0.2（毛玻璃 + 点击外部关闭）</b>
+  <span>宠物一句话告诉您：几个在跑、几个失败（失败就是失败）</span>
+  <span>场景：
+    <button class="btn" onclick="demo('mixed')">2 在跑 + 1 失败</button>
+    <button class="btn" onclick="demo('allrun')">全部在跑</button>
+    <button class="btn" onclick="demo('alldone')">全部完成</button>
+    <button class="btn" onclick="demo('none')">空闲</button>
+  </span>
+  <span class="hint">点宠物开/关面板 · 点面板外或按 ESC 关闭</span>
+</div>
+
+<div class="layout">
+  <div class="chat">
+    模拟 DSH 主界面（占位）。交互规范：<br>
+    · 点击宠物 → 展开/收起概览（toggle）<br>
+    · 点击面板以外任意处 → 关闭<br>
+    · 按 ESC → 关闭（键盘可达）<br>
+    · 面板为毛玻璃浮层，视觉弱化不明显<br><br>
+    <span style="color:var(--dsw-alias-label-tertiary)">💡 深色预览：控制台执行 document.body.setAttribute('data-ds-dark-theme','')</span>
+  </div>
+</div>
+
+<!-- 宠物 -->
+<div class="pet" id="pet" onclick="togglePanel()">
+  <div class="bubble ok" id="bubble"></div>
+  <div class="face" id="face">💤</div>
+  <div class="pet-name" id="petName">小黑鲸 · 打盹</div>
+  <div class="hint-line">点击查看会话状态 ▾</div>
+</div>
+
+<!-- 概要面板（毛玻璃浮层，无关闭按钮——点外部/ESC 关闭） -->
+<div class="panel" id="panel">
+  <div class="p-head">🐋 会话状态概览 <span class="esc-hint">点外部或 ESC 关闭</span></div>
+  <div class="p-sum" id="pSum"></div>
+  <div class="p-list" id="pList"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let sessions=[
+  {name:'配置 MCP 服务器', st:'running'},
+  {name:'Omi 语音联调', st:'running'},
+  {name:'宠物素材生成', st:'failed'},
+  {name:'会话库 V0 验证', st:'done'},
+  {name:'交接包定义', st:'idle'},
+];
+let panelOpen=false;
+
+function render(){
+  const run=sessions.filter(s=>s.st==='running').length;
+  const fail=sessions.filter(s=>s.st==='failed').length;
+  const done=sessions.filter(s=>s.st==='done').length;
+  const pet=$('pet'), b=$('bubble'), f=$('face'), n=$('petName');
+
+  pet.className='pet'+(run>0?' busy':'')+(fail>0?' worried':'')+(panelOpen?' active':'');
+  b.className='bubble'+(fail>0?'':run>0?' ok':'good');
+  if(fail>0){ f.textContent='😵💫'; n.textContent='小黑鲸 · 着急！'; b.innerHTML=`<b>${fail} 个对话失败</b> · ${run} 个进行中`; b.classList.add('show'); }
+  else if(run>0){ f.textContent='🐋'; n.textContent='小黑鲸 · 忙碌'; b.innerHTML=`<b>${run} 个对话进行中</b>`; b.classList.add('show'); }
+  else if(done>0){ f.textContent='🐳'; n.textContent='小黑鲸 · 开心'; b.innerHTML=`全部完成（${done} 个）`; b.classList.add('show'); }
+  else { f.textContent='💤'; n.textContent='小黑鲸 · 打盹'; b.classList.remove('show'); }
+  setTimeout(()=>b.classList.remove('show'),3500);
+
+  $('pSum').innerHTML=`
+    <span>进行中 <b class="n running">${run}</b></span>
+    <span>失败 <b class="n failed">${fail}</b></span>
+    <span>完成 <b class="n done">${done}</b></span>`;
+  $('pList').innerHTML=sessions.map(s=>{
+    const stTxt={running:'运行中',failed:'失败',done:'已完成',idle:'待机'};
+    return `<div class="p-item"><span class="dot" style="background:${s.st==='running'?'var(--dsw-alias-state-business-primary)':s.st==='failed'?'var(--dsw-alias-state-error-primary)':s.st==='done'?'var(--dsw-alias-state-success-primary)':'var(--dsw-alias-label-tertiary)'}"></span><span class="name">${s.name}</span><span class="st ${s.st}">${stTxt[s.st]}</span></div>`;
+  }).join('');
+}
+
+/* ===== 交互：点宠物 toggle · 点外部关闭 · ESC 关闭 ===== */
+function togglePanel(){ panelOpen=!panelOpen; $('panel').classList.toggle('show',panelOpen); render(); }
+function closePanel(){ if(panelOpen){ panelOpen=false; $('panel').classList.remove('show'); render(); } }
+
+document.addEventListener('pointerdown', e=>{
+  const inPet=$('pet').contains(e.target), inPanel=$('panel').contains(e.target);
+  if(!inPet && !inPanel) closePanel();
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePanel(); });
+
+function demo(scene){
+  const stMap={mixed:['running','running','failed','done','idle'],allrun:['running','running','running','running','running'],alldone:['done','done','done','done','done'],none:['idle','idle','idle','idle','idle']};
+  sessions.forEach((s,i)=>s.st=stMap[scene][i]);
+  render();
+}
+render();
+</script>
+</body>
+</html>
