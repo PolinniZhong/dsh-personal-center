@@ -94,7 +94,7 @@
 <div class="banner">
   <b>个性化指令增强 · Demo</b>
   <span>分层模式（参考 Codex AGENTS.md / CLAUDE.md / Cursor Rules）：全局 + 按工作区 + 模板库 + 注入预览</span>
-  <button class="btn" onclick="switchWs(0)">模拟：切到 03_日常对话</button>
+  <button class="btn" onclick="switchWs(0)">模拟：切到 02_dsh-personal-center_个人配置</button>
   <button class="btn" onclick="switchWs(1)">模拟：切到 Omi-DSH 端到端</button>
   <span class="hint">切换工作区看指令与预览联动 · 点模板「应用到…」试试</span>
 </div>
@@ -103,7 +103,7 @@
   <!-- 设置面板：个性化 tab -->
   <div class="panel">
     <div class="p-head">✨ 个性化
-      <span class="src">当前会话工作区：<b id="curWs">03_日常对话</b></span>
+      <span class="src">当前会话工作区：<b id="curWs">02_dsh-personal-center_个人配置</b></span>
     </div>
     <div class="p-tabs">
       <div class="t active" onclick="showTab('global',this)">全局指令</div>
@@ -134,7 +134,7 @@
     </div>
     <!-- 注入预览 -->
     <div class="preview">
-      <div class="preview-title">注入预览（<b id="pvWs">03_日常对话</b> 会话将收到）<span id="pvTokens" style="margin-left:auto;color:var(--dsw-alias-label-tertiary)"></span></div>
+      <div class="preview-title">注入预览（<b id="pvWs">02_dsh-personal-center_个人配置</b> 会话将收到）<span id="pvTokens" style="margin-left:auto;color:var(--dsw-alias-label-tertiary)"></span></div>
       <div class="preview-box" id="previewBox"></div>
     </div>
   </div>
@@ -150,7 +150,7 @@
 <script>
 const $=id=>document.getElementById(id);
 let ws=[
-  {path:'/…/03_日常对话', name:'03_日常对话', text:'本工作区做 DSH 插件产品规划与文档。语气务实，输出带版本号与待办清单；涉及需求评审时按「价值×成本×风险」结构。'},
+  {path:'/…/02_dsh-personal-center_个人配置', name:'02_dsh-personal-center_个人配置', text:'本工作区做 DSH 插件产品规划与文档。语气务实，输出带版本号与待办清单；涉及需求评审时按「价值×成本×风险」结构。'},
   {path:'/…/Omi-DSH 端到端', name:'Omi-DSH 端到端', text:'本工作区做语音端到端。回答侧重工程实现细节，给出代码与验证步骤，标注兼容性与已知坑。'},
   {path:'/…/0820', name:'0820', text:''},
 ];

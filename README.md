@@ -57,7 +57,7 @@
 - **常用工具**:按调用次数排序(含 `mcp__<server>__<tool>` 形式的 MCP 工具);
 - **会话回顾**:最近会话列表(标题 / 日期 / 时长 / Token / 缓存命中率),**自动排除已归档会话**。
 
-数据来源:扫描本机会话日志实时聚合,只读数字、不读正文。见 [docs/DESIGN.md](docs/DESIGN.md)。
+数据来源:扫描本机会话日志实时聚合,只读数字、不读正文。见 [docs/common/DESIGN.md](docs/common/DESIGN.md)。
 
 ### 模型成本(估算)
 
@@ -130,7 +130,7 @@ dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
 | v0.6 | 宠物会话状态概览升级(动作级实时显示) | ✅ 可用 |
 | v0.7 | **个性化指令增强**:全局 + 按工作区(分层自动注入)+ 模板库 + 注入预览 | ✅ 可用(v0.7) |
 
-> **后续规划(尚未实现)**:用量导出(JSON/CSV)、年度对比、更多皮肤/表情 —— 详见 [docs/PLAN.md](docs/PLAN.md)。
+> **后续规划(尚未实现)**:用量导出(JSON/CSV)、年度对比、更多皮肤/表情 —— 详见 [docs/common/PLAN.md](docs/common/PLAN.md)。
 
 ## 🤔 为什么做这个(立项评审摘要)
 

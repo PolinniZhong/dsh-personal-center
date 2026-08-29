@@ -8,7 +8,7 @@
 - **dsh-personal-center**:DeepSeek Harness 个人中心插件(设置 → 个人):
   个人资料统计 / 成本估算 / 个性化(全局+按工作区+模板库+注入预览)/ 桌面宠物。
 - 宿主:`lib/index.js`;客户端:`lib/client.js`(手写 bundle,无 JSX,`react.createElement`)。
-- 事实源文档:`docs/个性化指令增强-PRD.md`、`docs/PLATFORM-NOTES.md`、`docs/DESIGN-SYSTEM.md`。
+- 事实源文档:`docs/personalization/个性化指令增强-PRD.md`、`docs/common/PLATFORM-NOTES.md`、`docs/common/DESIGN-SYSTEM.md`。
 
 ## 2. 关键实现事实(勿再探索/勿改)
 
@@ -38,7 +38,7 @@
 5. **模板库每个模板独立描边框**(一格一框,像绘画库),不用一条线分隔。
 6. **工作区路径短显示**「… 名称」,点击路径本身展开;**无独立 expand(点点点)按钮**。
    **目录名 key 也要短显示**(显示层兜底:key 无斜杠时按 `-` 取末段,如
-   `--Users-…--` → 「… 03_日常对话」);**客户端加载时自动清理目录名 key**
+   `--Users-…--` → 「… 02_dsh-personal-center_个人配置」);**客户端加载时自动清理目录名 key**
    (以 `--` 开头/结尾,清理并持久化)——三层防御:发现返回真实路径 + 显示兜底 + 自动清理。
 7. **状态标签清淡**:无胶囊背景;**「当前会话工作区」文字标签已删除**(与路径重复);
    **工作区条目无外层描边框**(避免与输入框边框叠加成双层,参考全局配置:

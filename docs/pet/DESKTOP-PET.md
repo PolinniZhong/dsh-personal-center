@@ -73,7 +73,7 @@
 - **数据 = 平台已有投影**(`ctx.get("sessions")` 的 list + `manager.get(id)` 的 `getSnapshot().nodes`),零 host 改动、零端点、零轮询;面板打开才订阅、关闭即退订销毁(空闲零开销);实时性由 host `session/event` 帧驱动,零新增订阅;
 - **失败如实**:会话最近一次 agent 交互失败(`lastAgentError`,host `agent/error` 驱动)即标红「失败」,绝不伪装绿;优先级 失败 > 运行中(带动作)> 已完成 > 待机;
 - 情绪映射 失败→着急(exhausted)/ 运行中→busy / 完成→happy / 空闲→dozing;
-- 交互规格与 M0 验证结论见 `docs/宠物状态概览-设计规格与交接.md`;v0.6 迭代规格见 `状态卫士/宠物状态概览-动作级实时状态-设计规格.md`;冒烟测试 `/tmp/pet-client-smoke7.mjs`(30 项)。
+- 交互规格与 M0 验证结论见 `docs/pet/宠物状态概览-设计规格与交接.md`;v0.6 迭代规格见 `状态卫士/宠物状态概览-动作级实时状态-设计规格.md`;冒烟测试 `/tmp/pet-client-smoke7.mjs`(30 项)。
 
 ## 6.6 新动作与会话情绪驱动(v0.8.0)
 
