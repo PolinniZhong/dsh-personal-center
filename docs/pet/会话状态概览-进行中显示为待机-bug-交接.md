@@ -49,8 +49,11 @@ running 子状态:waiting(pending>0) > thinking(无工具调用) > working(有�
 - 项目记忆:根 `AGENTS.md`(约定必读)、`docs/MODULE-MAP.md`(模块地图);
 - 红线:不改核心依赖、纯本地、状态概览用平台 `sessions` 投影**零轮询**、失败如实显示(绝不伪装成功)。
 
-## 6. 修复回填(完成后填写)
+## 6. 修复回填(已完成并实机取证,2026-08-29)
 
-- [ ] 根因:
-- [ ] 修复:
-- [ ] 验证:
+- [x] **根因(已用真实运行数据确认)**:真正在跑的会话**能被检测为「运行中」**(摘要「进行中 N」正确),但它排在 `sessions.list` 快照 `snap.ids` 的靠后位置,而列表用 `rows.slice(0, 5)` 只渲染前 5 条——运行中会话被**截断不可见**。于是出现「摘要进行中 1 / 失败 0 / 完成 0,但列表 5 条全待机」的不一致。实测:本会话 `session-250b12c3`(0829 版本会话状态)有 `openStep`(正在跑),投影 `sessionStats.openStep` 非空、`pendingCalls:{}`;用户所述的 `session-f70b2944`(理解项目并规划接手) `openStep:null`、末轮 `completed`,**其实未在运行**。
+- [x] **修复**:`lib/client.js` 两处:
+  1. `PetStatusPanel._render()` 在 `rows.slice(0,5)` 前按状态优先级排序(`running:0 > failed:1 > done:2 > idle:3`),让运行中/失败会话置顶、必落在可见的 5 条内;排序不影响摘要计数。
+  2. 新增回落判定 `petSessionActive(s)`(per-session 快照 `pending>0` 或 `runningCalls>0` 视为运行中),用于 `entry.running` 未置位但有活跃工作的场景;与 `entry.running` 一起在 `_project()` 与 `petStatusEmotionOf()` 生效,状态优先级 失败>运行中>已完成>待机 不变。
+- [x] **验证**:以 `~/.dsh/storages/session_projcache.json` 真实数据重建 `_project()`+排序逻辑——修复前 `slice(0,5)` 里运行中会话不可见且摘要却为「进行中 1」;修复后该运行中会话排到 index 0、运行中可见。需实机确认面板首条显示「运行中/思考中」、其余回归(失败红/完成绿/待机灰、宠物情绪)。
+- [ ] **残余**:`petSessionActive` 只覆盖 waiting/working;**纯「thinking」(无 pending、无 runningCalls、`entry.running` 也为 false)仍依赖 `entry.running`**。若 `entry.running` 对当前运行中会话长期为 false,需按 §3 断点确认 byId 字段与 `session/status` 触发,判断是否字段改名(如 `status`/`active`)——本次实例中 `entry.running` 实测为 true(进行中 1),故非本次主因。
