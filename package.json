@@ -1,7 +1,7 @@
 {
   "name": "dsh-personal-center",
   "version": "0.9.0",
-  "description": "DSH 个人中心:设置 →「个人」分区(个人资料统计 + 个性化自定义指令 + 成本估算 + 桌面宠物 + 会话状态概览)",
+  "description": "DSH 个人中心:设置 →「个人配置」分区(Token 用量统计 + 个性化自定义指令 + 成本估算 + 桌面宠物 + 会话状态概览)",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
