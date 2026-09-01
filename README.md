@@ -1,13 +1,8 @@
-# DSH 个人中心 · dsh-personal-center
+# dsh-personal-center
 
-> **中文**:DeepSeek Harness 的个人中心插件:设置 →「个人配置」分区,提供 Token 用量(含成本估算)/ 个性化自定义指令 / 外观(全局字号)/ 桌面宠物。
-> **English**:A local, offline personal center for DeepSeek Harness — usage stats, cost estimation, custom instructions, global font size, and a desktop pet.
+> A local, offline personal center for DeepSeek Harness — usage stats, cost estimation, custom instructions, global font size, and a desktop pet.
 
-**[English](#english) · [中文](#中文)**
-
-## English
-
-A local, offline **personal center** plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) — Settings → **Personal Center** — with four tabs:
+A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Center** section to Settings, with four tabs:
 
 - **Token Usage** — real usage stats: today / cumulative tokens, session count, tool calls, a GitHub-style activity heatmap (daily / weekly / cumulative), per-model breakdown, top tools, and session review; with sub-tabs (Overview / Review / Model Cost).
 - **Personalization** — global custom instructions (like ChatGPT / Codex "Personalization → Custom instructions"), applied to all chats on this machine.
@@ -16,9 +11,106 @@ A local, offline **personal center** plugin for [DeepSeek Harness](https://githu
 
 **Model cost estimation** lives inside Token Usage: per-model pricing (peak / off-peak, per currency, official presets) plus cache-hit-rate stats.
 
-100% local — no network, no reading chat content. Bilingual UI (中文 / English), follows DSH's language automatically.
+100% local — no network, no reading chat content. See [PRIVACY.md](PRIVACY.md). Bilingual UI (中文 / English), follows DSH's language automatically.
 
-### Install
+## 📸 Screenshots
+
+### Four tabs (v1.0)
+
+| Token Usage | Personalization |
+|---|---|
+| ![Token Usage](docs/screenshots/token-usage.png) | ![Personalization](docs/screenshots/personalization.png) |
+
+| Appearance (global font size) | Pet |
+|---|---|
+| ![Appearance](docs/screenshots/appearance.png) | ![Pet](docs/screenshots/pet.png) |
+
+### Feature details
+
+| Token Usage · light | Review · dark |
+|---|---|
+| ![Token Usage · light](docs/screenshots/light-profile.png) | ![Review · dark](docs/screenshots/dark-review.png) |
+
+| Pet panel · light | Pet panel · dark |
+|---|---|
+| ![Pet · light](docs/screenshots/light-pet.png) | ![Pet · dark](docs/screenshots/dark-pet.png) |
+
+| Session status overview (double-click to jump) |
+|---|
+| ![Session status overview](docs/screenshots/pet-status-overview.png) |
+
+**Five emotion animations** (happy / busy / tired / wallet-pain / dozing):
+
+| Black whale | Blue whale |
+|---|---|
+| ![Black whale · five emotions](docs/screenshots/pet-emotions.gif) | ![Blue whale · five emotions](docs/screenshots/pet-emotions-blue.gif) |
+
+**New actions (v0.8.0)** (thinking / waiting / celebrate / drag / wave):
+
+| Black whale | Blue whale |
+|---|---|
+| ![Black whale · new actions](docs/screenshots/pet-new-actions-black-whale.gif) | ![Blue whale · new actions](docs/screenshots/pet-new-actions-blue-whale.gif) |
+
+| Model cost · dark |
+|---|
+| ![Model cost · dark](docs/screenshots/dark-model-cost.png) |
+
+| Personalization · per workspace (layered instructions + templates) |
+|---|
+| ![Personalization · per workspace](docs/screenshots/workspace-instructions.png) |
+
+## ✨ Features
+
+### Token Usage (statistics)
+
+- **Today overview**: token consumption / sessions / tool calls;
+- **Cumulative data**: total tokens / longest chat / total sessions / **cache-hit rate** / **estimated cost**;
+- **Token activity**: GitHub-contribution-style heatmap with **daily / weekly / cumulative** views;
+- **Per-model breakdown**: tokens, requests, **per-model cache-hit rate** and cost split by provider + model;
+- **Top tools**: sorted by call count (including MCP tools in `mcp__<server>__<tool>` form);
+- **Session review**: recent sessions (title / date / duration / tokens / cache-hit rate), **auto-excludes archived sessions**.
+
+Data source: aggregates local session logs in real time — numbers only, never reads content. See [docs/common/DESIGN.md](docs/common/DESIGN.md).
+
+### Model Cost (estimation)
+
+- Per-model cost per million tokens, split by **currency** (¥/$);
+- **Peak / off-peak** pricing (DeepSeek official: Beijing 9:00–12:00 & 14:00–18:00 peak, off-peak = half);
+- Built-in presets (deepseek / kimi / gemini / gpt) with provider→model autocomplete, editable;
+- Shows **this week / this month / cumulative** cost.
+
+### Personalization (layered instructions: v0.7)
+
+- **Global instructions** (identity baseline): identity / working principles / response preferences, applied to every chat on this machine;
+- **Per-workspace instructions** (project-specific): each workspace gets its own instructions, injected by **longest-prefix cwd match** as "global + workspace" merged text; unconfigured workspaces fall back to global only;
+- **Template library**: 5 built-in templates (PM / developer / writing / translator / general assistant), one-click apply to global or current workspace; save / edit / delete your own;
+- **Injection preview**: live "global + current workspace" merged text + ≈token estimate at the bottom;
+- All local (settings.yaml), zero network, no migration of existing `custom-instructions` data; bilingual, DSH design tokens.
+
+### Appearance (global font size: v1.0)
+
+- New "Appearance" tab with a **global font-size stepper**: default **14**, range **11–16**, step 1, instant preview, saved to local `localStorage`;
+- The engine scans all stylesheets for DSH `--dsw-font-*` tokens and hard-coded font-size rules, then offsets everything by "current − 14" via a `<style>` override layer — **at the default 14 the layer is empty and the UI is 100% untouched**;
+- Only shifts global font size, never touches other modules' layout; local, zero network.
+
+### Desktop Pet (black / blue whale)
+
+- A round little black whale in the bottom-right corner (S size by default), pure frontend, zero deps (alpha-transparent WebP assets, dark-theme outline glow);
+- **Pet list**: black whale / blue whale each with a full config card (preview + today's stats + opacity + toggle), **mutually exclusive — only one enabled at a time**; the preview art plays random idle expressions while the panel is open (rotates every 10s, wakes on enable); disabled cards stay static;
+- **Always-on but quiet when idle** (Codex-pet style): shows a single static idle frame, plays an animation on **emotion change** (~2s) and a small reaction on **hover / click**;
+- **5 data-driven emotions**, 30s polling of `/personal-center/stats`, priority: wallet-pain > tired > busy > dozing > happy;
+  - happy = cache-hit rate ≥ 70%; busy = today's tool calls ≥ 400; tired = today's tokens ≥ 200M; wallet-pain = today's cost ≥ ¥10 (needs configured prices); dozing = no activity ≥ 10 min (thresholds calibrated on real local data);
+- **Click** pops a random data bubble (today's tokens / cache-hit rate / top tool / today's cost), auto-dismisses in 3s;
+- **Session status overview**: a toggle card at the top of the Pet tab (on by default); hover the "Session status" button (or click the pet) → frosted-glass panel listing live session states (running / failed / done / idle + summary counts, running/failed on top); **double-click a session to jump into it**; failures shown honestly in red; event-driven from the platform's existing `sessions` projection (zero polling); close by clicking outside or pressing ESC; when disabled, the button hides and the pet returns to usage-driven emotions;
+- **Free drag**: drag anywhere, position remembered (restores after refresh); scales **proportionally** with window resize, stays in viewport;
+- **Right-click** menu: hide pet;
+- Minimal Pet tab panel: top "Session status" card (title + toggle + description, grayed when pet disabled) + two pet cards (preview + name + ⓘ hint + today's stats + **opacity (30%/60%/100%)** + **enable toggle**); toggles are mutually exclusive, interaction is toggle-only (no hover/selection visuals);
+- `enabled:false` creates no DOM and does no polling; API failures keep the last state, never crash;
+- Uses only aggregated numbers (today's tokens / tool calls / cost, cache-hit rate, last-activity time), never reads chat content.
+
+## 🛠 Install
+
+### Method 1: Plugin console / CLI (recommended)
 
 ```sh
 dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
@@ -26,216 +118,77 @@ dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
 
 Or: Web GUI → Settings → Plugins → Plugin Console, search "个人中心".
 
-### Privacy
+### Method 2: Local development (link dependency, same as dsh-omi-voice)
 
-Reads only aggregated numbers from local session logs — never reads chat content. See [PRIVACY.md](PRIVACY.md).
+1. Clone this repo anywhere;
+2. Add to your profile's `package.json`:
 
-### Roadmap
+   ```json
+   "dsh-personal-center": "link:/absolute/path/to/DSH 个人中心"
+   ```
+
+3. Add `"dsh-personal-center"` to the `dsh.profile.bundles` list;
+4. Restart DSH.
+
+> Note: if `node_modules` has no package after restart, symlink manually:
+> `ln -s /absolute/path/DSH 个人中心 <DSH_HOME>/profiles/web/node_modules/dsh-personal-center`
+
+### Uninstall
+
+Settings → Plugins → Plugin Console, disable / remove `dsh-personal-center`; or remove the dependency and `bundles` entry from `package.json`.
+
+## 🗺 Roadmap
 
 | Version | Content | Status |
 |---|---|---|
-| v1.0 | Appearance tab + global font-size engine, sticky / frosted-glass header, i18n template library, code governance refactor | ✅ (v1.0.0) |
-| v0.9 | "Personal Center" rename, pet single-page, session-status fixes, i18n | ✅ |
-| v0.8 | 5 new pet actions + session-status emotion-driven | ✅ |
-| v0.7 | Layered instructions (global + per-workspace + templates + preview) | ✅ |
+| v0.1 | Personalization → custom instructions (global injection) | ✅ |
+| v0.2 | "Personal" section: stats (real data) + personalization | ✅ |
+| v0.3 | Cost estimation (peak/off-peak, per currency, presets), cache-hit rate, session review, Token activity | ✅ |
+| v0.4 | Desktop pet (5 emotions, idle-static, drag memory, minimal panel) | ✅ |
+| v0.5 | Pet polish + session-status overview (action-level live state) | ✅ |
+| v0.6 | Session-status overview upgrade (action-level live display) | ✅ |
+| v0.7 | **Personalization enhancement**: global + per-workspace (layered injection) + templates + preview | ✅ (v0.7) |
+| v0.8 | 5 new pet actions (thinking/waiting/celebrate/drag/wave) + session-status emotion-driven | ✅ (v0.8.1) |
+| v0.9 | "Personal Center" rename, pet single-page, session-status fixes (running-on-top / double-click / hover-stable), i18n, proportional window-follow | ✅ (v0.9.0) |
+| v1.0 | Appearance tab + global font-size engine, sticky/frosted header, i18n template library, code governance refactor (4 module prefixes + SDD) | ✅ (v1.0.0) |
 
-Full history: [CHANGELOG.md](CHANGELOG.md).
+> **Planned (not yet)**: usage export (JSON/CSV), year-over-year comparison, more skins / emotions — see [docs/common/PLAN.md](docs/common/PLAN.md).
 
-### License
+## 🤔 Why (project rationale summary)
 
-[MIT](LICENSE)
+1. **Feasible**: DSH is plugin-based (host plugin + browser bundle); session logs record token usage and tool-call events; MCP tools are named `mcp__<server>__<tool>` for direct categorization;
+2. **User psychology**: quantified feedback (GitHub-contribution style), cost transparency (per-token billing), differentiation (no official personal center / global stats), privacy-friendly (aggregates only);
+3. **Risks & mitigations**: install barrier → one-click install; data accuracy → read authoritative logs; performance → host-side aggregation + 60s cache.
 
----
-
-## 中文
-
-一个面向 DeepSeek Harness(DSH)桌面端 / Web 端的本地插件。在设置里新增「**个人配置**」分区,含四个外层 tab:
-
-- **Token 用量**:真实用量统计 —— 今日/累计 Token、会话数、工具调用、Token 活动热力图(每日·每周·月度累计)、按模型分布、常用工具、会话回顾;内含子 tab(概览 / 回顾 / 模型成本);
-- **个性化**:全局自定义指令(等价于 ChatGPT / Codex 桌面端的「个性化 → 自定义指令」),对本机所有聊天生效;
-- **外观**:全局字号步进器(默认 14、范围 11–16、步进 1),一键缩放整套界面文字、改动即时预览、自动记忆;
-- **宠物**:圆滚滚小黑鲸 / 小蓝鲸 —— 由真实用量数据驱动 5 种情绪(开心/忙碌/疲惫/钱包痛/打盹),点击吐数据气泡、可拖拽记忆位置、右键快捷菜单,30 秒轮询;顶部「会话状态」卡可开关会话状态概览(实时列出运行中/失败/完成,双击某条直接进入对应会话)。
-
-「模型成本」位于「Token 用量」的子 tab 内:按模型估算成本(支持峰谷分时、分币种、官方预设价),外加缓存命中率统计。
-
-纯本地运行,不联网、不读取聊天正文,详见 [PRIVACY.md](PRIVACY.md)。**中英文双语界面**,随 DSH 语言自动切换。
-
-## 📸 截图
-
-### 四大分区(v1.0)
-
-| Token 用量 | 个性化 |
-|---|---|
-| ![Token 用量](docs/screenshots/token-usage.png) | ![个性化](docs/screenshots/personalization.png) |
-
-| 外观(全局字号) | 宠物 |
-|---|---|
-| ![外观](docs/screenshots/appearance.png) | ![宠物](docs/screenshots/pet.png) |
-
-### 功能细节
-
-| 浅色 · Token 用量 | 深色 · 回顾 |
-|---|---|
-| ![Token 用量 · 浅色](docs/screenshots/light-profile.png) | ![回顾 · 深色](docs/screenshots/dark-review.png) |
-
-| 浅色 · 宠物面板 | 深色 · 宠物面板 |
-|---|---|
-| ![宠物 · 浅色](docs/screenshots/light-pet.png) | ![宠物 · 深色](docs/screenshots/dark-pet.png) |
-
-| 会话状态概览(双击进入会话) |
-|---|
-| ![会话状态概览](docs/screenshots/pet-status-overview.png) |
-
-**五种情绪动画**(开心 / 忙碌 / 疲惫 / 钱包痛 / 打盹):
-
-| 黑鲸 | 蓝鲸 |
-|---|---|
-| ![黑鲸 · 五种情绪](docs/screenshots/pet-emotions.gif) | ![蓝鲸 · 五种情绪](docs/screenshots/pet-emotions-blue.gif) |
-
-**新增动作( v0.8.0 )**(思考中 / 等你回复 / 完成庆祝 / 拖拽 / 点击打招呼):
-
-| 黑鲸 | 蓝鲸 |
-|---|---|
-| ![黑鲸 · 新增动作](docs/screenshots/pet-new-actions-black-whale.gif) | ![蓝鲸 · 新增动作](docs/screenshots/pet-new-actions-blue-whale.gif) |
-
-| 模型成本 · 深色 |
-|---|
-| ![模型成本 · 深色](docs/screenshots/dark-model-cost.png) |
-
-| 个性化 · 按工作区(分层指令 + 模板库)|
-|---|
-| ![个性化 · 按工作区](docs/screenshots/workspace-instructions.png) |
-
-## ✨ 功能
-
-### Token 用量(统计)
-
-- **今日概览**:Token 消耗 / 会话 / 工具调用;
-- **累计数据**:累计 Token / 最长聊天时长 / 会话总数 / **缓存命中率** / **估算成本**;
-- **Token 活动**:GitHub 贡献图风格热力图,支持 **每日 / 每周 / 累计** 三态切换;
-- **按模型分布**:按 provider + model 拆分 Token、请求数、**每模型缓存命中率**与成本(多模型对比一目了然);
-- **常用工具**:按调用次数排序(含 `mcp__<server>__<tool>` 形式的 MCP 工具);
-- **会话回顾**:最近会话列表(标题 / 日期 / 时长 / Token / 缓存命中率),**自动排除已归档会话**。
-
-数据来源:扫描本机会话日志实时聚合,只读数字、不读正文。见 [docs/common/DESIGN.md](docs/common/DESIGN.md)。
-
-### 模型成本(估算)
-
-- 按模型 × 每百万 token 单价估算成本,**分币种**(¥/$)分别合计;
-- 支持 **峰谷分时**(DeepSeek 官方口径:北京 9:00-12:00、14:00-18:00 为高峰,空闲=高峰一半);
-- 内置官方预设价(deepseek / kimi / gemini / gpt),提供「提供方→模型」联想添加,可自改;
-- 展示:**本周 / 本月 / 累计** 成本。
-
-### 个性化(分层指令:v0.7)
-
-- **全局指令**(身份基线):输入身份 / 工作原则 / 回答偏好,保存后**本机所有会话**的下一次请求自动带上;
-- **按工作区指令**(项目适配):为每个工作区配置专属指令,会话按 **cwd 最长前缀匹配**自动注入「全局 + 工作区」合并文本;未配置的工作区回退仅全局(与旧版行为一致);
-- **指令模板库**:内置 5 个高质量模板(产品经理 / 开发者 / 写作 / 翻译 / 通用助手),一键应用到全局或当前工作区;支持把当前指令「存为模板」、编辑、删除;
-- **注入预览**:底部实时显示「全局 + 当前工作区」合并后的最终指令 + ≈token 估算,切换工作区联动更新;
-- 全部纯本地(settings.yaml)、零网络、不迁移现有 `custom-instructions` 数据,中英文双语、DSH 设计令牌。
-
-### 外观(全局字号:v1.0)
-
-- 新增第 4 个 tab「外观」,提供**全局字号步进器**:默认 **14**、范围 **11–16**、步进 1,改动即时全局预览、自动记忆到本机 `localStorage`;
-- 引擎遍历所有可读样式表,收集 DSH 的 `--dsw-font-*` token 与硬编码字号规则,按「当前值 − 14」的差值整体偏移,经一个 `<style>` 覆盖层统一生效——**默认 14 时覆盖层为空,界面 100% 原样**;
-- 只做全局字号偏移、不触碰其它模块版式;纯本地、零网络。
-
-### 桌面宠物(黑鲸 / 蓝鲸)
-
-- 界面右下角圆滚滚小黑鲸(默认 S 尺寸),纯前端零依赖(素材为宿主托管的动画 WebP,真 alpha 透明,深色主题有描边光);
-- **宠物列表**:圆滚滚小黑鲸 / 圆滚滚小蓝鲸**各一张完整配置卡**(预览 + 今日统计 + 不透明度 + 开关),**开关互斥只能启用一只**;左边形象图在面板打开期间**交替随机播放小表情动画**(每 10s 轮换一只,启用瞬间再动一次 = 唤醒);未启用的卡片保持静态(固定表情 + 占位统计);
-- **常驻显示,平时静止不打扰**(参考 Codex 宠物设计):待机时显示单帧静态表情,不做循环动作;**情绪变化时会播放对应动画**,约 2 秒后回到静止;**鼠标悬停或点击也会按当前情绪做个小动作**;
-- **5 种数据驱动情绪**,30 秒轮询 `/personal-center/stats`,优先级:钱包痛 > 疲惫 > 忙碌 > 打盹 > 开心;
-  - 开心 = 缓存命中率 ≥ 70%;忙碌 = 今日工具调用 ≥ 400 次;疲惫 = 今日 Token ≥ 2 亿;钱包痛 = 今日成本 ≥ ¥10(需配置价格);打盹 = 无活动 ≥ 10 分钟(阈值已按本机真实数据校准);
-- **点击**弹出随机数据气泡(今日 Token / 缓存命中率 / 最常用工具 / 今日成本),3 秒后消失;
-- **会话状态概览**:宠物页顶部「会话状态」卡可**开关**状态概览(默认开);开启后悬停宠物右上角「会话状态」按钮(或点击宠物)→ 毛玻璃面板,实时列出会话状态(运行中 / 失败 / 已完成 / 待机 + 摘要计数,**运行中/失败置顶**);**双击某条直接进入对应会话**;失败如实标红(绝不伪装绿色成功);数据来自平台已有 `sessions` 投影,事件驱动、零轮询;点面板外或 ESC 关闭;关闭会话状态时按钮隐藏、宠物情绪回到用量驱动;
-- **自由拖拽**:拖到哪就停在哪,松手后位置记忆到宿主配置(刷新后恢复);窗口缩放**按比例跟随**(缩小/拉大都跟随,始终留在视口内不丢出);
-- **右键**快捷菜单:隐藏宠物;
-- 「宠物」tab 极简面板:顶部「会话状态」卡(标题 + 开关 + 说明,宠物未启用时置灰)+ 下方两张宠物卡片(预览 + 宠物名 + ⓘ 提示 + 今日统计 + **不透明度档位(30%/60%/100%)** + **启用开关**);开关互斥、交互只靠开关(无 hover/选中视觉);
-- `enabled:false` 时不创建任何 DOM、不轮询;接口失败保留上一状态不崩溃;
-- 只使用聚合数字(今日 Token/工具调用/成本、缓存命中率、最近活动时间),不读聊天正文。
-
-## 🛠 安装
-
-### 方式一:插件控制台 / CLI(推荐)
-
-```sh
-dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
-```
-
-或打开 Web GUI → 设置 → 插件 → 插件控制台,搜索「个人中心」安装。
-
-### 方式二:本地开发(link 依赖,和 dsh-omi-voice 同款)
-
-1. 克隆本仓库到本地任意目录;
-2. 在 profile 的 `package.json` 中加入依赖:
-
-   ```json
-   "dsh-personal-center": "link:/绝对路径/DSH 个人中心"
-   ```
-
-3. 在 profile 的 `dsh.profile.bundles` 列表中加入 `"dsh-personal-center"`;
-4. 重启 DSH 应用。
-
-> 注:重启后,若 `node_modules` 中没有该包,可手动建立软链接:
-> `ln -s /绝对路径/DSH 个人中心 <DSH_HOME>/profiles/web/node_modules/dsh-personal-center`
-
-### 卸载
-
-设置 → 插件 → 插件控制台,停用 / 删除 `dsh-personal-center`;或删除 `package.json` 中的依赖与 `bundles` 条目。
-
-## 🗺 路线图
-
-| 版本 | 内容 | 状态 |
-|---|---|---|
-| v0.1 | 个性化 → 自定义指令(全局注入) | ✅ 可用 |
-| v0.2 | 「个人」分区:统计(真实数据)+ 个性化 | ✅ 可用 |
-| v0.3 | 成本估算(峰谷分时/分币种/官方预设)、缓存命中率、会话回顾(排除归档)、Token 活动(每日/每周/月度累计) | ✅ 可用 |
-| v0.4 | 桌面宠物(5 情绪、常驻显示/平时静止/情绪变化动画、拖拽位置记忆、极简面板) | ✅ 可用 |
-| v0.5 | 宠物行为打磨 + 会话状态概览(动作级实时状态) | ✅ 可用 |
-| v0.6 | 宠物会话状态概览升级(动作级实时显示) | ✅ 可用 |
-| v0.7 | **个性化指令增强**:全局 + 按工作区(分层自动注入)+ 模板库 + 注入预览 | ✅ 可用(v0.7) |
-| v0.8 | 桌宠 5 个新动作(思考/等待/庆祝/拖拽/打招呼)+ 会话状态情绪实时驱动 | ✅ 可用(v0.8.1) |
-| v0.9 | 「个人配置」改名、「宠物」单页(会话状态卡 + 宠物卡)、会话状态修复(运行中置顶/双击进入/悬停稳定)、i18n 补全、宠物随窗口按比例跟随 | ✅ 可用(v0.9.0) |
-| v1.0 | 「外观」Tab + 全局字号引擎(默认 14、11–16)、设置头部 sticky + 毛玻璃、i18n 模板库本地化、代码治理重构(4 模块类前缀 + SDD) | ✅ 可用(v1.0.0) |
-
-> **后续规划(尚未实现)**:用量导出(JSON/CSV)、年度对比、更多皮肤/表情 —— 详见 [docs/common/PLAN.md](docs/common/PLAN.md)。
-
-## 🤔 为什么做这个(立项评审摘要)
-
-1. **技术可行**:DSH 是插件化架构(宿主插件 + 浏览器 bundle),本仓库即是范例;会话日志记录了每次请求的 token 用量与工具调用事件,MCP 工具以 `mcp__<server>__<tool>` 命名可直接归类;
-2. **符合用户心理**:量化反馈(类似 GitHub 贡献图)、成本透明(按 token 计费)、差异化(官方暂无个人中心/全局统计)、隐私友好(只聚合数字);
-3. **风险与对策**:安装门槛 → 一键安装;数据准确性 → 直接读权威日志;性能 → 宿主端聚合 + 60s 缓存。
-
-## 📁 仓库结构
+## 📁 Repository structure
 
 ```
-├── package.json          # dsh.bundle.patch + dsh.client 声明
-├── cordis.patch.yml      # 插入插件行
+├── package.json          # dsh.bundle.patch + dsh.client declaration
+├── cordis.patch.yml      # plugin row
 ├── lib/
-│   ├── index.js          # 宿主:设置命名空间 + 系统提示词注入 + 统计服务 + 环回路由(含宠物配置/素材)
-│   ├── client.js         # 浏览器:「个人配置」分区 UI(统计 + 成本 + 个性化 + 外观/字号 + 宠物面板/浮层)
-│   └── pet-assets/       # 宠物动画素材(5×WebP,由 gif2webp.py 从 RGBA 帧合成)
+│   ├── index.js          # host: settings namespaces + prompt injection + stats + loopback routes (pet config/assets)
+│   ├── client.js         # browser: Personal Center UI (stats + cost + personalization + appearance/font + pet panel/overlay)
+│   └── pet-assets/       # pet animation assets (5×WebP, built from RGBA frames)
 ├── docs/
-│   ├── README.md          # 项目知识地图(入口)
-│   ├── SDD.md             # 模块规格与边界契约(类前缀 / 易混淆点 / 新增模块 SOP)
-│   ├── MODULE-MAP.md      # 功能 → 代码/路由/文档/素材 映射
-│   ├── common/            # 通用:DESIGN(架构决策)/ DESIGN-SYSTEM(UI 设计规范)/ PLAN / PLATFORM-NOTES / 发布与竞争力
-│   ├── personal-profile/  # Token 用量:DATA-MODEL / COST-ESTIMATION
-│   ├── personalization/   # 个性化:个性化指令增强 PRD
-│   └── pet/               # 宠物:DESKTOP-PET / 状态概览设计规格
-├── docs/screenshots/     # 截图
-├── PRIVACY.md            # 隐私说明
+│   ├── README.md          # knowledge map (entry)
+│   ├── SDD.md             # module spec & boundaries (class prefixes / pitfalls / new-module SOP)
+│   ├── MODULE-MAP.md      # feature → code/route/doc/asset map
+│   ├── common/            # DESIGN / DESIGN-SYSTEM / PLAN / PLATFORM-NOTES / release
+│   ├── personal-profile/  # Token Usage: DATA-MODEL / COST-ESTIMATION
+│   ├── personalization/   # Personalization: PRD
+│   └── pet/               # Pet: DESKTOP-PET / status overview spec
+├── docs/screenshots/     # screenshots
+├── PRIVACY.md            # privacy
 ├── README.md
 └── LICENSE               # MIT
 ```
 
-> 想了解架构/踩坑/规范,从 [docs/README.md](docs/README.md) 的知识地图开始。
+> For architecture / pitfalls / conventions, start with [docs/README.md](docs/README.md).
 
-## 📄 许可
+## 📄 License
 
 [MIT](LICENSE)
 
-## 🙏 致谢
+## 🙏 Thanks
 
-架构参考 [dsh-omi-voice](https://github.com/)(link 依赖 + bundle patch 模式)与 [dsh-plugin-hub](https://github.com/Noob-stupid/dsh-plugin-hub)(插件控制台安装通道)。
+Architecture references [dsh-omi-voice](https://github.com/) (link dependency + bundle patch pattern) and [dsh-plugin-hub](https://github.com/Noob-stupid/dsh-plugin-hub) (plugin console install channel).
