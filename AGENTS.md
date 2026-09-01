@@ -11,14 +11,38 @@
   - `DSH 个人中心/` = **本插件**(代码 `lib/`、文档 `docs/`、项目记忆本文件);
   - `AI桌面宠物/` = **宠物素材源**(皮肤版本 gif + 脚本 + 规格),合成 WebP 进 `lib/pet-assets/`;
   - 工作区根另有一份 `AGENTS.md`(**工作区导览**,供人读;DSH 自动加载的是本文件,以本文件为准)。
-- **当前进行中任务(如有)**:见 `docs/pet/会话状态概览-进行中显示为待机-bug-交接.md`(bug 修复交接,自包含)。
+- **当前进行中任务(如有)**:见本文件 §1 模块地图 + `docs/SDD.md`;模块开发按 §1「新增模块 SOP」执行。
 
-## 1. 项目概况
+## 1. 项目概况与模块地图(改代码前必读)
 
-- **dsh-personal-center**:DeepSeek Harness 个人中心插件(设置 → 个人):
-  个人资料统计 / 成本估算 / 个性化(全局+按工作区+模板库+注入预览)/ 桌面宠物。
-- 宿主:`lib/index.js`;客户端:`lib/client.js`(手写 bundle,无 JSX,`react.createElement`)。
-- 事实源文档:`docs/personalization/个性化指令增强-PRD.md`、`docs/common/PLATFORM-NOTES.md`、`docs/common/DESIGN-SYSTEM.md`。
+- **dsh-personal-center**:DeepSeek Harness 个人中心插件(设置 → 个人配置),4 个 tab:
+  **Token 用量 / 个性化 / 外观 / 宠物**。
+- 宿主:`lib/index.js`;客户端:`lib/client.js`(手写单 bundle,无 JSX,`react.createElement`)。
+
+### 模块地图(类名前缀唯一;改代码先对号入座,勿跨模块改错)
+
+| 模块 | 关键组件 | 类名前缀 | 数据源 |
+|---|---|---|---|
+| Token 用量 | `ProfileTab` / `TokenActivity` / `CostEditor`(成本子 tab) | `.dsh-pc-profile-*` | `/personal-center/stats`、`/personal-center/pricing` |
+| 个性化 | `PersonalizationTab` | `.dsh-pc-pers-*` | `/personal-center/instructions`、`/current-workspace`、`/workspaces` |
+| 外观 | `AppearanceTab` + 全局字号引擎 `UI_FONT_*` | `.dsh-pc-appear-*` | `localStorage`(uiFont) |
+| 宠物 | `PetPanel`/`PetSection`;`PetStatusConfig`(会话状态卡);`PetWidget`/`PetStatusPanel`(浮层) | `.dsh-pc-pet-*`、`.dsh-pc-petstatus-*`、`.dsh-pet-*`、`.dsh-pet-status-*` | `/personal-center/pet`、`ctx.get("sessions")`、`/stats` |
+| 共享外壳 | `PersonalCenterSection` / `TabButton` / `PillTabButton` | `.dsh-pc-section/tabs/tab/panel/group/heading/intro/mock` | — |
+
+### 运行逻辑(分区怎么跑起来)
+
+1. `PersonalCenterSection` 是分区外壳:`TabButton` 在 4 个 tab 间切换,`react.useState("profile")` 决定渲染哪个模块组件。
+2. **事件驱动优先,能订阅就不轮询**:宠物情绪订阅 `sessions.list`(零轮询);仅统计/宠物用量走 30s 轮询。
+3. 宠物是「纯 DOM 浮层 + 单页设置卡」;会话状态概览直接读平台 `ctx.get("sessions")`(list + per-session subscribe),零轮询。
+
+### 新增模块 SOP(强制,否则视为未完成)
+
+1. 起一个**唯一类名前缀**(如 `.dsh-pc-xxx-*`),不得复用其它模块前缀;
+2. 在 `client.js` 加组件 + 对应 `//#region 模块: xxx` 区;
+3. 在 `PersonalCenterSection` 注册 tab;
+4. 同步更新**本文件模块地图** + **`docs/SDD.md`**。
+
+- 事实源文档:`docs/personalization/个性化指令增强-PRD.md`、`docs/common/PLATFORM-NOTES.md`、`docs/common/DESIGN-SYSTEM.md`、`docs/SDD.md`。
 
 ## 2. 关键实现事实(勿再探索/勿改)
 
@@ -70,10 +94,9 @@
 
 ## 5. 版本状态
 
-- 当前主线 **v0.8.1(已发布收口,2026-08-25)**:
-  - **v0.8.0**:桌宠 5 个新动作(thinking/waiting/celebrate/drag/wave,黑鲸+蓝鲸)+ 会话状态情绪实时驱动(常驻同步器、情绪锁仲裁 stats 不覆盖、完成庆祝走 running 下降沿、持续情绪不回落);素材路由白名单扩 10 + 动态解析;对抗式审查修复 3 个边界 bug;素材版本 `?v=v5`。
-  - **v0.8.1**:README 新增动作并排 GIF;GitHub topics 补 desktop-pet/pet/desktop-companion;npm keywords 同步。
-  - 前置 **v0.7.0**(2026-08-23):个性化指令增强(全局+按工作区+模板库+注入预览,事件通道注入实测生效)。
+- 已发布 **v1.0.0**(2026-09-01):新增「外观」tab(全局字号引擎 `UI_FONT_*`,默认 14、11–16)+ 设置头部 sticky/毛玻璃 + i18n 模板库本地化 + 模块类名唯一化治理(4 模块前缀 + `docs/SDD.md`)——见本文件 §1。
+- 已发布 **v0.9.0**(2026-08-29):「个人 → 个人配置」「个人资料 → Token 用量」改名;宠物改单页(会话状态卡 + 黑鲸/蓝鲸两卡)+ `sessionStatus` 开关;会话状态修复(运行中置顶/双击进入/悬停稳定/0 值隐藏)+ 归档/子代理过滤;i18n 补全;宠物随窗口按比例跟随。
+- 前置版本:v0.8.1(README GIF/话题/npm keywords)、v0.8.0(桌宠 5 动作 + 会话状态情绪实时驱动)、v0.7.0(个性化指令增强)。
 - 桌宠素材管线:豆包生成 GIF → `AI桌面宠物/<skin>/assets/animations/<action>/frames_processed/` → `gif2webp-new-actions.py` 合成 WebP → 插件 `lib/pet-assets/<skin>/{animations,idle}/`;新动作规格见 `AI桌面宠物/桌宠v0.7-新增4动作-素材生成规格.md`。
 - 后续候选:条件注入(按模型/任务/文件/时段)、模板导入导出、桌宠更多情绪。
 - 发布节奏:功能验证通过后提交推送 GitHub(代理 127.0.0.1:7897)+ 更新官方 Discussions #3449;npm 发布需用户确认。

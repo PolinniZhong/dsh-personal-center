@@ -1,11 +1,12 @@
 # DSH 个人中心 (dsh-personal-center)
 
-> DeepSeek Harness 的个人中心插件:设置 → **「个人配置」分区**,提供 **Token 用量(含成本估算) / 个性化自定义指令 / 桌面宠物**。
+> DeepSeek Harness 的个人中心插件:设置 → **「个人配置」分区**,提供 **Token 用量(含成本估算) / 个性化自定义指令 / 外观(全局字号) / 桌面宠物**。
 
-一个面向 DeepSeek Harness(DSH)桌面端 / Web 端的本地插件。在设置里新增「**个人配置**」分区,含三个外层 tab:
+一个面向 DeepSeek Harness(DSH)桌面端 / Web 端的本地插件。在设置里新增「**个人配置**」分区,含四个外层 tab:
 
 - **Token 用量**:真实用量统计 —— 今日/累计 Token、会话数、工具调用、Token 活动热力图(每日·每周·月度累计)、按模型分布、常用工具、会话回顾;内含子 tab(概览 / 回顾 / 模型成本);
 - **个性化**:全局自定义指令(等价于 ChatGPT / Codex 桌面端的「个性化 → 自定义指令」),对本机所有聊天生效;
+- **外观**:全局字号步进器(默认 14、范围 11–16、步进 1),一键缩放整套界面文字、改动即时预览、自动记忆;
 - **宠物**:圆滚滚小黑鲸 / 小蓝鲸 —— 由真实用量数据驱动 5 种情绪(开心/忙碌/疲惫/钱包痛/打盹),点击吐数据气泡、可拖拽记忆位置、右键快捷菜单,30 秒轮询;顶部「会话状态」卡可开关会话状态概览(实时列出运行中/失败/完成,双击某条直接进入对应会话)。
 
 「模型成本」位于「Token 用量」的子 tab 内:按模型估算成本(支持峰谷分时、分币种、官方预设价),外加缓存命中率统计。
@@ -13,6 +14,18 @@
 纯本地运行,不联网、不读取聊天正文,详见 [PRIVACY.md](PRIVACY.md)。**中英文双语界面**,随 DSH 语言自动切换。
 
 ## 📸 截图
+
+### 四大分区(v1.0)
+
+| Token 用量 | 个性化 |
+|---|---|
+| ![Token 用量](docs/screenshots/token-usage.png) | ![个性化](docs/screenshots/personalization.png) |
+
+| 外观(全局字号) | 宠物 |
+|---|---|
+| ![外观](docs/screenshots/appearance.png) | ![宠物](docs/screenshots/pet.png) |
+
+### 功能细节
 
 | 浅色 · Token 用量 | 深色 · 回顾 |
 |---|---|
@@ -74,6 +87,12 @@
 - **注入预览**:底部实时显示「全局 + 当前工作区」合并后的最终指令 + ≈token 估算,切换工作区联动更新;
 - 全部纯本地(settings.yaml)、零网络、不迁移现有 `custom-instructions` 数据,中英文双语、DSH 设计令牌。
 
+### 外观(全局字号:v1.0)
+
+- 新增第 4 个 tab「外观」,提供**全局字号步进器**:默认 **14**、范围 **11–16**、步进 1,改动即时全局预览、自动记忆到本机 `localStorage`;
+- 引擎遍历所有可读样式表,收集 DSH 的 `--dsw-font-*` token 与硬编码字号规则,按「当前值 − 14」的差值整体偏移,经一个 `<style>` 覆盖层统一生效——**默认 14 时覆盖层为空,界面 100% 原样**;
+- 只做全局字号偏移、不触碰其它模块版式;纯本地、零网络。
+
 ### 桌面宠物(黑鲸 / 蓝鲸)
 
 - 界面右下角圆滚滚小黑鲸(默认 S 尺寸),纯前端零依赖(素材为宿主托管的动画 WebP,真 alpha 透明,深色主题有描边光);
@@ -131,6 +150,7 @@ dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
 | v0.7 | **个性化指令增强**:全局 + 按工作区(分层自动注入)+ 模板库 + 注入预览 | ✅ 可用(v0.7) |
 | v0.8 | 桌宠 5 个新动作(思考/等待/庆祝/拖拽/打招呼)+ 会话状态情绪实时驱动 | ✅ 可用(v0.8.1) |
 | v0.9 | 「个人配置」改名、「宠物」单页(会话状态卡 + 宠物卡)、会话状态修复(运行中置顶/双击进入/悬停稳定)、i18n 补全、宠物随窗口按比例跟随 | ✅ 可用(v0.9.0) |
+| v1.0 | 「外观」Tab + 全局字号引擎(默认 14、11–16)、设置头部 sticky + 毛玻璃、i18n 模板库本地化、代码治理重构(4 模块类前缀 + SDD) | ✅ 可用(v1.0.0) |
 
 > **后续规划(尚未实现)**:用量导出(JSON/CSV)、年度对比、更多皮肤/表情 —— 详见 [docs/common/PLAN.md](docs/common/PLAN.md)。
 
@@ -147,16 +167,16 @@ dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
 ├── cordis.patch.yml      # 插入插件行
 ├── lib/
 │   ├── index.js          # 宿主:设置命名空间 + 系统提示词注入 + 统计服务 + 环回路由(含宠物配置/素材)
-│   ├── client.js         # 浏览器:「个人配置」分区 UI(统计 + 成本 + 个性化 + 宠物面板/浮层)
+│   ├── client.js         # 浏览器:「个人配置」分区 UI(统计 + 成本 + 个性化 + 外观/字号 + 宠物面板/浮层)
 │   └── pet-assets/       # 宠物动画素材(5×WebP,由 gif2webp.py 从 RGBA 帧合成)
 ├── docs/
-│   ├── README.md         # 项目知识地图(入口)
-│   ├── DESIGN.md         # 架构与设计决策
-│   ├── PLAN.md           # 实施规划与路线图
-│   ├── PLATFORM-NOTES.md # DSH 平台要点与坑
-│   ├── DESIGN-SYSTEM.md  # 设计规范(间距/字号/色值)
-│   ├── DATA-MODEL.md     # 会话日志数据模型
-│   └── nav-icon-patch.md # 个人导航图标补丁说明
+│   ├── README.md          # 项目知识地图(入口)
+│   ├── SDD.md             # 模块规格与边界契约(类前缀 / 易混淆点 / 新增模块 SOP)
+│   ├── MODULE-MAP.md      # 功能 → 代码/路由/文档/素材 映射
+│   ├── common/            # 通用:DESIGN(架构决策)/ DESIGN-SYSTEM(UI 设计规范)/ PLAN / PLATFORM-NOTES / 发布与竞争力
+│   ├── personal-profile/  # Token 用量:DATA-MODEL / COST-ESTIMATION
+│   ├── personalization/   # 个性化:个性化指令增强 PRD
+│   └── pet/               # 宠物:DESKTOP-PET / 状态概览设计规格
 ├── docs/screenshots/     # 截图
 ├── PRIVACY.md            # 隐私说明
 ├── README.md

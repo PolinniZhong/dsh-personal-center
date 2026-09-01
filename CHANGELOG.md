@@ -2,6 +2,28 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.0] - 2026-09-01
+
+### 新增
+- **「外观」Tab + 全局字号引擎**(全新增功能):设置 →「个人配置」新增第 4 个 tab「外观」,提供全局字号步进器——默认 **14**、范围 **11–16**、步进 1,改动即时全局预览;
+  - 引擎 `UI_FONT_*` 遍历所有可读样式表,收集 `--dsw-font-*` token 声明与硬编码 `font-size`/`font` 简写规则,按 delta(= 基准 − 14)重建 CSS:token 在 `body` 级重声明(覆盖 `:root` 继承链),硬编码规则用 `!important` 逐条覆盖;
+  - 注入一个 `<style>` 覆盖层(`data-plugin-css="dsh-personal-center/ui-font-overrides"`),改动时刷新 `textContent`;默认 14 时覆盖层为空、界面 100% 原样;
+  - 字号持久化到 `localStorage`(`dsh-personal-center.uiFont`),随插件 `ctx.effect` 注册/清理;
+  - 外观卡片:标题「字号大小」+ 描述在左、数字步进 + px 单位在右,**控件相对整卡垂直居中**,控件高度 28px。
+
+### 变更
+- **设置面板头部 sticky + 毛玻璃**:主 Tab 栏、子 Tab 栏均 sticky 固定,向下滚动不随内容滚走;主/子 Tab 间 24px 缝隙用「子 Tab `margin-top:-24px + padding-top:24px`」根治(毛玻璃盒上移盖住缝隙,胶囊位置与下方内容不变);毛玻璃配方复刻会话状态弹窗(`rgba(255,255,255,.45)` + `backdrop-filter:blur(7px) saturate(.75)`,暗色 `rgba(28,30,36,.45)`)。
+- **i18n 模板库本地化**:个性化「模板库」5 个内置模板(产品经理/开发者/写作/翻译/通用助手)此前写死中文,现英文 UI 下显示英文名称/描述/指令正文,「应用到工作区」也用本地化文本;自定义模板保持用户原文不翻译。
+- **代码治理重构**:`lib/client.js` 按 4 模块(Token 用量/个性化/外观/宠物)加 `//#region` 边界并规定唯一 CSS 类前缀(`.dsh-pc-profile-*`/`.dsh-pc-pers-*`/`.dsh-pc-appear-*`/`.dsh-pc-pet-*`);拆分历史共用前缀 `.dsh-pc-ss-*` → `.dsh-pc-appear-*`(外观)+ `.dsh-pc-petstatus-*`(宠物·会话状态卡);删除 3 个无对应 CSS 的孤儿 className。
+- **宠物·会话状态卡重构**:布局从「标题 + 开关一行、说明在下」重构为「标题 + 说明在左、开关在右、整卡垂直居中」(flex `align-items:center`)。
+- **会话状态概览面板微调**:标题「会话状态概览」→「会话概览」;面板宽 320→256px;摘要数字 14px→11px;列表恰好显示 5 整行(固定行高 32px + `max-height:178px`)。
+
+### 文档
+- 新增 `docs/SDD.md`(模块职责/边界、类前缀契约、易混淆点、新增模块 SOP、文件映射);
+- README 补「外观/全局字号」功能与 4 分区截图,仓库结构、路线图补 v1.0;
+- 删除 3 个过时交接文档(awesome-dsh-plugin 收录准备 / 个性化指令增强交接 / 会话状态概览 bug 交接);
+- `docs/common/DESIGN-SYSTEM.md`、插件 `AGENTS.md`、工作区 `AGENTS.md` 同步到 v1.0.0。
+
 ## [0.9.0] - 2026-08-29
 
 ### 变更

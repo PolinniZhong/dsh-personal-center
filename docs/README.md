@@ -4,22 +4,25 @@
 
 ## 一句话
 
-给 DeepSeek Harness(DSH)加「个人」分区:个人资料统计(Token/工具/按模型/Token 活动)+ **个性化分层指令(全局 + 按工作区 + 模板库 + 注入预览)** + 模型成本估算 + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
+给 DeepSeek Harness(DSH)加「个人配置」分区(设置 → 个人配置),四个 tab:**Token 用量统计**(Token/工具/按模型/Token 活动 + 模型成本估算)+ **个性化分层指令**(全局 + 按工作区 + 模板库 + 注入预览)+ **外观(全局字号 11–16)** + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
 
 ## 文档导航(按模块分组)
 
 | 文档 | 回答什么问题 | 何时读 |
 |---|---|---|
 | [../AGENTS.md](../AGENTS.md) | **项目长期记忆**:已确认需求约定 + 关键实现事实(每次必读) | 任何开发/修改前 |
+| [SDD.md](SDD.md) | **模块规格与边界契约**:类前缀 / 易混淆点 / 新增模块 SOP | 改代码前对号入座 |
 | [MODULE-MAP.md](MODULE-MAP.md) | **模块地图**:功能 → 代码/路由 → 文档 → 素材 的完整映射 | 想定位某个功能归哪个文件 |
 
-**📊 个人资料(统计/成本)** — `personal-profile/`
+**📊 Token 用量(统计/成本)** — `personal-profile/`
 | [personal-profile/DATA-MODEL.md](personal-profile/DATA-MODEL.md) | 会话日志格式、统计数据从哪来 | 改统计逻辑 |
 | [personal-profile/COST-ESTIMATION.md](personal-profile/COST-ESTIMATION.md) | 成本估算口径(峰谷/分币种/预设价) | 改成本计算 |
 
 **✏️ 个性化(全局/按工作区/模板库/注入)** — `personalization/`
 | [personalization/个性化指令增强-PRD.md](personalization/个性化指令增强-PRD.md) | 分层指令(全局+按工作区+模板库+预览)的产品需求与验证结论 | 维护/扩展个性化功能 |
-| [personalization/个性化指令增强-交接提示词.md](personalization/个性化指令增强-交接提示词.md) | 个性化功能的开发交接提示词 | 交接/新对话接手 |
+
+**🎨 外观(全局字号)** — 规格见 `SDD.md` §2「外观」
+| [SDD.md](SDD.md) | 外观模块职责/边界、全局字号引擎 `UI_FONT_*`(11–16、默认 14) | 改外观/字号 |
 
 **🐋 宠物(浮层/情绪/状态概览)** — `pet/`
 | [pet/DESKTOP-PET.md](pet/DESKTOP-PET.md) | 桌面宠物方案与落地记录(形态/情绪/阈值校准/已知限制) | 维护宠物功能 |
