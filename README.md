@@ -1,6 +1,53 @@
-# DSH 个人中心 (dsh-personal-center)
+# DSH 个人中心 · dsh-personal-center
 
-> DeepSeek Harness 的个人中心插件:设置 → **「个人配置」分区**,提供 **Token 用量(含成本估算) / 个性化自定义指令 / 外观(全局字号) / 桌面宠物**。
+> **中文**:DeepSeek Harness 的个人中心插件:设置 →「个人配置」分区,提供 Token 用量(含成本估算)/ 个性化自定义指令 / 外观(全局字号)/ 桌面宠物。
+> **English**:A local, offline personal center for DeepSeek Harness — usage stats, cost estimation, custom instructions, global font size, and a desktop pet.
+
+**[English](#english) · [中文](#中文)**
+
+## English
+
+A local, offline **personal center** plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) — Settings → **Personal Center** — with four tabs:
+
+- **Token Usage** — real usage stats: today / cumulative tokens, session count, tool calls, a GitHub-style activity heatmap (daily / weekly / cumulative), per-model breakdown, top tools, and session review; with sub-tabs (Overview / Review / Model Cost).
+- **Personalization** — global custom instructions (like ChatGPT / Codex "Personalization → Custom instructions"), applied to all chats on this machine.
+- **Appearance** — a global font-size stepper (default **14**, range **11–16**, step 1): scales the whole UI instantly and remembers your choice.
+- **Desktop Pet** — a round little black / blue whale driven by your real usage (5 emotions), with a session-status overview (double-click a session to jump into it).
+
+**Model cost estimation** lives inside Token Usage: per-model pricing (peak / off-peak, per currency, official presets) plus cache-hit-rate stats.
+
+100% local — no network, no reading chat content. Bilingual UI (中文 / English), follows DSH's language automatically.
+
+### Install
+
+```sh
+dsh plugin --profile web add github:PolinniZhong/dsh-personal-center
+```
+
+Or: Web GUI → Settings → Plugins → Plugin Console, search "个人中心".
+
+### Privacy
+
+Reads only aggregated numbers from local session logs — never reads chat content. See [PRIVACY.md](PRIVACY.md).
+
+### Roadmap
+
+| Version | Content | Status |
+|---|---|---|
+| v1.0 | Appearance tab + global font-size engine, sticky / frosted-glass header, i18n template library, code governance refactor | ✅ (v1.0.0) |
+| v0.9 | "Personal Center" rename, pet single-page, session-status fixes, i18n | ✅ |
+| v0.8 | 5 new pet actions + session-status emotion-driven | ✅ |
+| v0.7 | Layered instructions (global + per-workspace + templates + preview) | ✅ |
+
+Full history: [CHANGELOG.md](CHANGELOG.md).
+
+### License
+
+[MIT](LICENSE)
+
+---
+
+## 中文
 
 一个面向 DeepSeek Harness(DSH)桌面端 / Web 端的本地插件。在设置里新增「**个人配置**」分区,含四个外层 tab:
 
