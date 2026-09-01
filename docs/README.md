@@ -35,6 +35,7 @@
 | [common/PLATFORM-NOTES.md](common/PLATFORM-NOTES.md) | DSH 平台的坑、限制、扩展点(血泪经验) | 改宿主端/客户端、遇到诡异 bug |
 | [common/DESIGN-SYSTEM.md](common/DESIGN-SYSTEM.md) | 间距/字号/色值/组件规范 + 宠物 UI + 会话状态面板规范 | 改 UI |
 | [common/nav-icon-patch.md](common/nav-icon-patch.md) | 个人导航图标补丁怎么打、何时重打 | DSH 升级后图标变回齿轮 |
+| [common/发布手册.md](common/发布手册.md) | 四口径发布流程(GitHub/npm/awesome-dsh-plugin/官方展示帖)+ 踩坑记录 | 发版、交接 |
 | [common/已发布平台.md](common/已发布平台.md) | 插件发布在哪些平台、PR 状态、待办 | 交接、查看发布进度 |
 | [common/竞争力分析.md](common/竞争力分析.md) | 个人工作台生态位、竞品地图、推广策略 | 写推广、做定位决策 |
 
