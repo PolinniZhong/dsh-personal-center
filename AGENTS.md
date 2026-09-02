@@ -26,7 +26,7 @@
 | Token 用量 | `ProfileTab` / `TokenActivity` / `CostEditor`(成本子 tab) | `.dsh-pc-profile-*` | `/personal-center/stats`、`/personal-center/pricing` |
 | 个性化 | `PersonalizationTab` | `.dsh-pc-pers-*` | `/personal-center/instructions`、`/current-workspace`、`/workspaces` |
 | 外观 | `AppearanceTab` + 全局字号引擎 `UI_FONT_*` | `.dsh-pc-appear-*` | `localStorage`(uiFont) |
-| 宠物 | `PetPanel`/`PetSection`;`PetStatusConfig`(会话状态卡);`PetWidget`/`PetStatusPanel`(浮层) | `.dsh-pc-pet-*`、`.dsh-pc-petstatus-*`、`.dsh-pet-*`、`.dsh-pet-status-*` | `/personal-center/pet`、`ctx.get("sessions")`、`/stats` |
+| 宠物 | `PetPanel`/`PetSection`;`PetStatusConfig`(会话状态卡);`PetWidget`(位图浮层)/`VectorPetWidget`(矢量浮层);`PetStatusPanel` | `.dsh-pc-pet-*`、`.dsh-pc-petstatus-*`、`.dsh-pet-*`、`.dsh-pet-status-*`、`.dsh-pet-vector-*` | `/personal-center/pet`、`ctx.get("sessions")`、`/stats` |
 | 共享外壳 | `PersonalCenterSection` / `TabButton` / `PillTabButton` | `.dsh-pc-section/tabs/tab/panel/group/heading/intro/mock` | — |
 
 ### 运行逻辑(分区怎么跑起来)
@@ -94,6 +94,7 @@
 
 ## 5. 版本状态
 
+- 已发布 **v1.1.0**(2026-09-03):新增矢量桌宠皮肤「圆滚滚小黑 / 圆滚滚小蓝」(皮肤 id `black-vector` / `blue-vector`),纯 DOM 鼠标跟随(眼睛/头位移/上下"驼"形变/渐变光源四层 + 转向透视 + 靠近眨眼/点眼眯线/点身挠痒/随机放大),**非 WebP**;与位图皮肤(`black-whale`/`blue-whale`,动画 WebP)并存、互斥。宿主皮肤白名单扩为 4 个 + `PET_BITMAP_SKINS` 区分素材路由。
 - 已发布 **v1.0.0**(2026-09-01):新增「外观」tab(全局字号引擎 `UI_FONT_*`,默认 14、11–16)+ 设置头部 sticky/毛玻璃 + i18n 模板库本地化 + 模块类名唯一化治理(4 模块前缀 + `docs/SDD.md`)——见本文件 §1。
 - 已发布 **v0.9.0**(2026-08-29):「个人 → 个人配置」「个人资料 → Token 用量」改名;宠物改单页(会话状态卡 + 黑鲸/蓝鲸两卡)+ `sessionStatus` 开关;会话状态修复(运行中置顶/双击进入/悬停稳定/0 值隐藏)+ 归档/子代理过滤;i18n 补全;宠物随窗口按比例跟随。
 - 前置版本:v0.8.1(README GIF/话题/npm keywords)、v0.8.0(桌宠 5 动作 + 会话状态情绪实时驱动)、v0.7.0(个性化指令增强)。

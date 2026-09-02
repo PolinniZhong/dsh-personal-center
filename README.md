@@ -7,7 +7,7 @@ A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Cente
 - **Token Usage** — real usage stats: today / cumulative tokens, session count, tool calls, a GitHub-style activity heatmap (daily / weekly / cumulative), per-model breakdown, top tools, and session review; with sub-tabs (Overview / Review / Model Cost).
 - **Personalization** — global custom instructions (like ChatGPT / Codex "Personalization → Custom instructions"), applied to all chats on this machine.
 - **Appearance** — a global font-size stepper (default **14**, range **11–16**, step 1): scales the whole UI instantly and remembers your choice.
-- **Desktop Pet** — a round little black / blue whale driven by your real usage (5 emotions), with a session-status overview (double-click a session to jump into it).
+- **Desktop Pet** — bitmap (black / blue whale) and vector ("round black / round blue") skins, driven by your real usage (5 emotions), with a session-status overview (double-click a session to jump into it).
 
 **Model cost estimation** lives inside Token Usage: per-model pricing (peak / off-peak, per currency, official presets) plus cache-hit-rate stats.
 
@@ -96,6 +96,7 @@ Data source: aggregates local session logs in real time — numbers only, never 
 ### Desktop Pet (black / blue whale)
 
 - A round little black whale in the bottom-right corner (S size by default), pure frontend, zero deps (alpha-transparent WebP assets, dark-theme outline glow);
+- **Vector skins** (v1.1): "round black / round blue" (`black-vector` / `blue-vector`) — pure-DOM (radial-gradient body + capsule eyes), **zero assets**; mouse-follow in four layers (eyes / head shift / deform / light source) + turn perspective (side eye shrinks, eye gap compresses) + blink on approach / squint on eye click / tickle on body click / random head zoom; coexists with bitmap skins (mutually exclusive), switching rebuilds the instance;
 - **Pet list**: black whale / blue whale each with a full config card (preview + today's stats + opacity + toggle), **mutually exclusive — only one enabled at a time**; the preview art plays random idle expressions while the panel is open (rotates every 10s, wakes on enable); disabled cards stay static;
 - **Always-on but quiet when idle** (Codex-pet style): shows a single static idle frame, plays an animation on **emotion change** (~2s) and a small reaction on **hover / click**;
 - **5 data-driven emotions**, 30s polling of `/personal-center/stats`, priority: wallet-pain > tired > busy > dozing > happy;

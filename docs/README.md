@@ -4,7 +4,7 @@
 
 ## 一句话
 
-给 DeepSeek Harness(DSH)加「个人配置」分区(设置 → 个人配置),四个 tab:**Token 用量统计**(Token/工具/按模型/Token 活动 + 模型成本估算)+ **个性化分层指令**(全局 + 按工作区 + 模板库 + 注入预览)+ **外观(全局字号 11–16)** + **桌面宠物(数据驱动情绪的黑鲸 + 会话状态概览)**。纯本地、插件化、不联网。
+给 DeepSeek Harness(DSH)加「个人配置」分区(设置 → 个人配置),四个 tab:**Token 用量统计**(Token/工具/按模型/Token 活动 + 模型成本估算)+ **个性化分层指令**(全局 + 按工作区 + 模板库 + 注入预览)+ **外观(全局字号 11–16)** + **桌面宠物(数据驱动情绪的黑鲸/蓝鲸 + 矢量鼠标跟随的小黑/小蓝 + 会话状态概览)**。纯本地、插件化、不联网。
 
 ## 文档导航(按模块分组)
 
@@ -52,6 +52,7 @@
 | 宠物为什么平时静止 | 参考 Codex 宠物规范:idle 待机=静止,情绪变化/逗弄时才播放动画 | DESKTOP-PET |
 | 宠物为什么不能全屏移动 | 桌面端是 Tauri 宿主 + iframe,dsh 应用与宿主跨源、无 Tauri API;插件无法出窗口 | PLATFORM-NOTES |
 | 宠物素材怎么生产 | RGBA 帧 → 动画 WebP(gif2webp.py),animations/ 动作 + idle/ 待机 | DESKTOP-PET |
+| 矢量皮肤 vs 位图皮肤 | 位图 `black-whale`/`blue-whale`=WebP+情绪动画;矢量 `black-vector`/`blue-vector`=纯 DOM 鼠标跟随,无素材、无情绪动画,切换需销毁重建实例 | DESKTOP-PET / SDD |
 | 改素材为什么看不到 | 宿主 immutable 缓存 + 素材路径不变 → 浏览器沿用旧图;素材 URL 需带 `?v=` 版本参数并递增 | PLATFORM-NOTES / DESKTOP-PET |
 | 会话状态概览数据从哪来 | 平台已有 `sessions` 投影(useSessions),事件驱动、零轮询;失败如实标红,绝不伪装成功 | DESIGN / DESKTOP-PET |
 | 会话状态面板视觉规范 | 毛玻璃浮层(同气泡配方 v0.4.20)+ 状态色板(蓝/红/绿/灰)+ 点面板外或 ESC 关闭 | DESIGN-SYSTEM |

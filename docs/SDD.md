@@ -26,12 +26,13 @@
 - 数据:`localStorage`(`dsh-personal-center.uiFont`)。
 - 边界:**只做全局字号偏移**,不触碰其它模块的版式。
 
-### 宠物(`.dsh-pc-pet-*` / `.dsh-pc-petstatus-*` / `.dsh-pet-*` / `.dsh-pet-status-*`)
+### 宠物(`.dsh-pc-pet-*` / `.dsh-pc-petstatus-*` / `.dsh-pet-*` / `.dsh-pet-status-*` / `.dsh-pet-vector-*`)
 - 组件:
-  - 设置卡:`PetPanel`(黑鲸/蓝鲸两卡)、`PetStatusConfig`(会话状态开关卡,前缀 `petstatus`)、`PetSection`(单页容器);
-  - 浮层:`PetWidget`(全局宠物)、`PetStatusPanel`(会话状态概览浮层)。
+  - 设置卡:`PetPanel`(4 张皮肤卡:位图 黑鲸/蓝鲸 + 矢量 小黑/小蓝)、`PetStatusConfig`(会话状态开关卡,前缀 `petstatus`)、`PetSection`(单页容器);
+  - 浮层:`PetWidget`(位图,动画 WebP)/`VectorPetWidget`(矢量,纯 DOM 鼠标跟随)、`PetStatusPanel`(会话状态概览浮层)。
+- 皮肤:位图 `black-whale` / `blue-whale`(动画 WebP);矢量 `black-vector` / `blue-vector`(纯 DOM,无素材,类前缀 `.dsh-pet-vector-*`)。
 - 数据:`/personal-center/pet`(宠物配置)、`ctx.get("sessions")`(会话状态)、`/stats`(用量情绪)。
-- 边界:**会话状态概览只用平台 `sessions` 投影,零轮询**;`sessionStatus` 关闭时隐藏状态按钮 + 停用情绪同步。
+- 边界:**会话状态概览只用平台 `sessions` 投影,零轮询**;`sessionStatus` 关闭时隐藏状态按钮 + 停用情绪同步;矢量皮肤无情绪动画(情绪接口 no-op),位图↔矢量切换需销毁重建实例(类不同)。
 
 ### 共享外壳(`.dsh-pc-*` 通用)
 - `PersonalCenterSection`、`TabButton`、`PillTabButton`、以及 `.dsh-pc-section/heading/intro/tabs/tab/panel/group/mock` 等布局原语。被所有模块复用,不属于任何单一模块。
@@ -53,6 +54,7 @@
 1. **外观 vs 宠物**:外观=字号步进器(`.dsh-pc-appear-*`);宠物·会话状态卡=开关(`.dsh-pc-petstatus-*` + `.dsh-pc-pet-switch`)。两者都长成“带边框设置卡”,但前缀不同。
 2. **Token 用量 vs 成本**:成本(`CostEditor`)属 Token 用量模块,前缀 `.dsh-pc-profile-*`。
 3. **宠物设置卡 vs 宠物浮层**:前者 `.dsh-pc-pet-*`,后者 `.dsh-pet-*`/`.dsh-pet-status-*`(浮层 DOM)。
+4. **位图皮肤 vs 矢量皮肤**:位图 `black-whale`/`blue-whale` 用 `PetWidget` + WebP(`/personal-center/pet/assets/*`);矢量 `black-vector`/`blue-vector` 用 `VectorPetWidget` + 纯 DOM(`.dsh-pet-vector-*`),无素材、无情绪动画。两者实例类不同,切换需销毁重建。
 
 ## 6. 新增模块 SOP
 
@@ -64,5 +66,5 @@
 |---|---|
 | `lib/index.js` | 宿主:设置命名空间 + assemble 注入 + 环回路由(stats/instructions/pricing/pet/workspaces)+ 素材托管 |
 | `lib/client.js` | 浏览器:分区外壳 + 4 模块组件 + 宠物浮层运行时 + 外观字号引擎(单 bundle) |
-| `lib/pet-assets/<skin>/` | 宠物动画 WebP(宿主托管) |
+| `lib/pet-assets/<skin>/` | 位图宠物动画 WebP(宿主托管;矢量皮肤 `black-vector`/`blue-vector` 无素材) |
 | `cordis.patch.yml` | 插入插件行(客户端半部经 `exports.client` + `dsh.client` 自动加载) |
