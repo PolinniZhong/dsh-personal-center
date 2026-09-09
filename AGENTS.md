@@ -101,4 +101,4 @@
 - 前置版本:v0.8.1(README GIF/话题/npm keywords)、v0.8.0(桌宠 5 动作 + 会话状态情绪实时驱动)、v0.7.0(个性化指令增强)。
 - 桌宠素材管线:豆包生成 GIF → `AI桌面宠物/<skin>/assets/animations/<action>/frames_processed/` → `gif2webp-new-actions.py` 合成 WebP → 插件 `lib/pet-assets/<skin>/{animations,idle}/`;新动作规格见 `AI桌面宠物/桌宠v0.7-新增4动作-素材生成规格.md`。
 - 后续候选:条件注入(按模型/任务/文件/时段)、模板导入导出、桌宠更多情绪。
-- 发布节奏:功能验证通过后提交推送 GitHub(代理 127.0.0.1:7897)+ 更新官方 Discussions #3595(勿用 #3449,已过时,以 docs/common/已发布平台.md 为准);npm 发布需用户确认。
+- 发布节奏:功能验证通过后提交推送 GitHub(代理 127.0.0.1:7897)+ 更新官方 Discussions #3595(勿用 #3449,已过时,以仓库根 `已发布平台.md` 为准);npm 发布需用户确认。

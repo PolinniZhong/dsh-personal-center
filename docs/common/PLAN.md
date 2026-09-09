@@ -147,5 +147,5 @@ M3 合流,一次重启验证。
 - ✅ 截图(宠物面板浅色/深色 + 五种情绪 GIF + **按工作区分层指令**)已入 `docs/screenshots/`
 - ✅ 2026-08-22:0.7.0 升级后 nav-icon 补丁已重打(见 docs/common/nav-icon-patch.md)
 - ⏳ awesome-dsh-plugin 收录 PR #2741(CI 已通过,待维护者合并;合并后 dsh-market 自动同步)
-- ✅ 发布记录:docs/common/已发布平台.md(GitHub / npm / 展示帖 / awesome PR / dsh-market 同步路径)
+- ✅ 发布记录：仓库根 `已发布平台.md`（2026-09-09 起自 docs/common/ 移出；不进 npm 包）——GitHub / npm / 展示帖 / awesome PR / dsh-market 同步路径
 - ⏳ 可选:仓库 About 区补 description + topics(`dsh-plugin` / `deepseek-harness` / `personal-center` / `usage-stats` / `desktop-pet` / `session-status`)
