@@ -50,9 +50,13 @@
   事件,在 `result.sections` 插入 `{name:"custom-instructions", text:<合并文本>}`(splice 在 index 1)。
   **严禁**用 `systemPrompt.section/variable` 注册或 `ctx.get("systemPrompt")`(0.7.0 已收进 agent scope,
   前者不生效、后者会抛错阻塞 Harness 启动)。详情 PLATFORM-NOTES §14。
-- **设置命名空间**(settings.yaml):`custom-instructions`(全局文本)、`personal-center-instructions`
-  (JSON:workspaces + templates)、`personal-center-pricing`、`personal-center-pet`。
-  全部用 `safeRegister` 逐个注册(任一失败不连累其它)。`custom-instructions` 数据**永不迁移**。
+- **设置(0.1.7 起换模型)**:DSH 0.1.7 的 `dsh-settings` 移除了 `register`/`get`,改为「插件 `Config` schema
+  派生 + `settings.describe/update`」,命名空间 = profile entry id(`personal-center`)。本插件用 `Config` 的 4 个
+  `volatile` 字段组承载历史命名空间(`custom-instructions` / `personal-center-instructions` /
+  `personal-center-pricing` / `personal-center-pet`),适配层把读写包装回旧调用面;`≤0.1.6` 仍走 `safeRegister`
+  旧路径。旧 `settings.yaml` 的 section 需按同名字段组搬入 entry config;`custom-instructions` 数据**永不迁移**原则不变。
+- **设置文档路径**:0.1.7 起 `settings.documentPath` = profile 补丁路径(旧版为 `<dshHome>/settings.yaml`),
+  会话日志/归档 storages 目录按多候选探测,勿直接 `dirname(documentPath)`。
 - **工作区发现**:`/personal-center/workspaces` 必须从各会话日志 `session.cwd` 收集**真实路径**去重
   (已实现 `discoverWorkspaces`);**禁止**返回会话目录名(`--Users-…--` 模糊编码,会与真实路径 key 重复)。
 - **当前工作区**:`/personal-center/current-workspace` = 最近活动会话 cwd(一次性读取,非轮询)。
@@ -94,6 +98,7 @@
 
 ## 5. 版本状态
 
+- **本地已就绪、待发布 v1.1.2**(2026-09-28):**DSH 0.1.7 兼容修复**——设置 API 换模型(`Config` schema + `describe/update` 适配层,`settingsNamespace`/`register` 已从新版移除)、自绘设置页声明、`documentPath` 语义变化导致的 sessions/storages 路径修正、client inject 去掉已移除的 `dsh-client-runtime`;保留 `≤0.1.6` 旧路径兼容。详见 CHANGELOG。
 - 已发布 **v1.1.1**(2026-09-09):纯兼容验证版,**无代码变更**——实测兼容 DSH 0.1.2-rc.1(桌面壳设置外壳 UI 改版,设置弹层根类更名等),设置 → 个人配置 四模块(Token 用量/个性化/外观/宠物)验证正常;配合 dsh-session-workbench v1.0.2 可避免其「会话视图」装饰误伤同数量 tab 条(曾致 外观/宠物 两 tab 被隐藏,根因在 workbench)。
 - 已发布 **v1.1.0**(2026-09-03):新增矢量桌宠皮肤「圆滚滚小黑 / 圆滚滚小蓝」(皮肤 id `black-vector` / `blue-vector`),纯 DOM 鼠标跟随(眼睛/头位移/上下"驼"形变/渐变光源四层 + 转向透视 + 靠近眨眼/点眼眯线/点身挠痒/随机放大),**非 WebP**;与位图皮肤(`black-whale`/`blue-whale`,动画 WebP)并存、互斥。宿主皮肤白名单扩为 4 个 + `PET_BITMAP_SKINS` 区分素材路由。
 - 已发布 **v1.0.0**(2026-09-01):新增「外观」tab(全局字号引擎 `UI_FONT_*`,默认 14、11–16)+ 设置头部 sticky/毛玻璃 + i18n 模板库本地化 + 模块类名唯一化治理(4 模块前缀 + `docs/SDD.md`)——见本文件 §1。

@@ -2,6 +2,19 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.2] - 2026-09-28
+
+### 兼容性
+- **适配 DSH 0.1.7**(插件设置 API 换模型):`@deepseek-ai/dsh-settings` 移除了 `settingsNamespace` 导出与 `SettingsService.register/get`;设置改为「插件 `Config` schema 派生 + `settings.describe/update`」,命名空间 = profile entry id。
+  - 新增 `Config`:4 个 `volatile` 字段组沿用旧命名空间名(`custom-instructions` / `personal-center-pricing` / `personal-center-pet` / `personal-center-instructions`);适配层把既有读写包装回旧调用面,**设置分区行为不变**;
+  - 声明自绘设置页 `settings.configure({ auto: false }, ctx.fiber)`,避免宿主再生成一份自动表单;
+  - `≤0.1.6`(settings 仍有 `register/get`)继续走原命名空间注册路径,老宿主不受影响。
+- **设置文档路径语义修正**:0.1.7 起 `settings.documentPath` 指向 profile 补丁(`<dshHome>/profiles/<name>/cordis.patch.yml`;0.1.6 及以前为 `<dshHome>/settings.yaml`)——会话日志目录与归档 `storages/workspace.json` 改为多候选探测,统计/归档过滤不再扫错目录。
+- **client inject 清理**:移除新版已不存在的 `@deepseek-ai/dsh-client-runtime`(0.1.7 的槽位/会话服务由外壳提供);依赖移除已不再使用的 `@deepseek-ai/dsh-settings`。
+
+### 迁移
+- 0.1.7 不再自动导入旧 `settings.yaml` 中本插件的 section;请把 `personal-center-pet` / `personal-center-pricing` 等同名 section 搬入 profile 补丁里 `personal-center` entry 的 `config`(字段组键同名,可直接粘贴)。
+
 ## [1.1.1] - 2026-09-08
 
 ### 兼容性
