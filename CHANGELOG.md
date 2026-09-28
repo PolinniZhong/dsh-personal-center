@@ -11,6 +11,7 @@
   - `≤0.1.6`(settings 仍有 `register/get`)继续走原命名空间注册路径,老宿主不受影响。
 - **设置文档路径语义修正**:0.1.7 起 `settings.documentPath` 指向 profile 补丁(`<dshHome>/profiles/<name>/cordis.patch.yml`;0.1.6 及以前为 `<dshHome>/settings.yaml`)——会话日志目录与归档 `storages/workspace.json` 改为多候选探测,统计/归档过滤不再扫错目录。
 - **client inject 清理**:移除新版已不存在的 `@deepseek-ai/dsh-client-runtime`(0.1.7 的槽位/会话服务由外壳提供);依赖移除已不再使用的 `@deepseek-ai/dsh-settings`。
+- **会话导航适配**:「会话状态概览」双击进入会话改用 0.1.7 的外壳导航 `ctx.uiWorkspace.openSession`(官方插件同款),旧宿主回退 `ctx.sessions.open`。
 
 ### 迁移
 - 0.1.7 不再自动导入旧 `settings.yaml` 中本插件的 section;请把 `personal-center-pet` / `personal-center-pricing` 等同名 section 搬入 profile 补丁里 `personal-center` entry 的 `config`(字段组键同名,可直接粘贴)。
