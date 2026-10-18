@@ -98,6 +98,7 @@
 
 ## 5. 版本状态
 
+- **本地已就绪、待发布 v1.1.3**(2026-10-18):**统计口径修复**——会话日志改为模式匹配 `session(?:.vN)?.jsonl.zstd`(DSH 0.2.1-rc.2 起改名为 `session.v4.jsonl.zstd`,旧实现整块读不到导致 Token 用量全 0);「最长聊天」改用**活跃时长**(相邻事件间隔 > 5 分钟视为离开,不再把隔夜空档算进去,修掉 450 小时虚增);切帧改为「魔数定位 + 以下一帧起点为界解压 + 逐字节回退」,不再依赖帧头推算,避免一帧坏后续全丢;首帧缺失时按会话 id 兜底。详见 CHANGELOG。
 - **本地已就绪、待发布 v1.1.2**(2026-09-28):**DSH 0.1.7 兼容修复**——设置 API 换模型(`Config` schema + `describe/update` 适配层,`settingsNamespace`/`register` 已从新版移除)、自绘设置页声明、`documentPath` 语义变化导致的 sessions/storages 路径修正、client inject 去掉已移除的 `dsh-client-runtime`;保留 `≤0.1.6` 旧路径兼容。详见 CHANGELOG。
 - 已发布 **v1.1.1**(2026-09-09):纯兼容验证版,**无代码变更**——实测兼容 DSH 0.1.2-rc.1(桌面壳设置外壳 UI 改版,设置弹层根类更名等),设置 → 个人配置 四模块(Token 用量/个性化/外观/宠物)验证正常;配合 dsh-session-workbench v1.0.2 可避免其「会话视图」装饰误伤同数量 tab 条(曾致 外观/宠物 两 tab 被隐藏,根因在 workbench)。
 - 已发布 **v1.1.0**(2026-09-03):新增矢量桌宠皮肤「圆滚滚小黑 / 圆滚滚小蓝」(皮肤 id `black-vector` / `blue-vector`),纯 DOM 鼠标跟随(眼睛/头位移/上下"驼"形变/渐变光源四层 + 转向透视 + 靠近眨眼/点眼眯线/点身挠痒/随机放大),**非 WebP**;与位图皮肤(`black-whale`/`blue-whale`,动画 WebP)并存、互斥。宿主皮肤白名单扩为 4 个 + `PET_BITMAP_SKINS` 区分素材路由。
