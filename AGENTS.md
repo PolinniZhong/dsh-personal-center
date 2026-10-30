@@ -98,7 +98,7 @@
 
 ## 5. 版本状态
 
-- **本地已就绪、待发布 v1.2.0**(2026-10-30):**Token 统计修复 + 多供应商分别统计 + 外观下线**——会话日志按代读取(`session.v4` → `session.v3` → 旧格式,同一会话只取最高代防重复)、逐条按 `message.source` 归属 provider/model、新增 `byProvider` 聚合与「按供应商分布」分组 UI(旧宿主/旧缓存由前端兜底聚合)、自动读取已配置供应商/模型(0 用量也列出);并移除「外观」tab 与全局字号引擎(DSH 官方设置已提供字号),设置页现为 3 个 tab。详见 CHANGELOG。
+- 已发布 **v1.2.0**(2026-10-30):**Token 统计修复 + 多供应商分别统计 + 外观下线**——会话日志按代读取(`session.v4` → `session.v3` → 旧格式,同一会话只取最高代防重复)、逐条按 `message.source` 归属 provider/model、新增 `byProvider` 聚合与「按供应商分布」分组 UI(旧宿主/旧缓存由前端兜底聚合)、自动读取已配置供应商/模型(0 用量也列出);并移除「外观」tab 与全局字号引擎(DSH 官方设置已提供字号),设置页现为 3 个 tab。已发 GitHub Release + npm 1.2.0 + 展示帖 #3595 公告;awesome 描述更新 PR #10548 待合并。详见 CHANGELOG。
 - 已发布 **v1.1.2**(2026-09-28):**DSH 0.1.7 兼容修复**——设置 API 换模型(`Config` schema + `describe/update` 适配层,`settingsNamespace`/`register` 已从新版移除)、自绘设置页声明、`documentPath` 语义变化导致的 sessions/storages 路径修正、client inject 去掉已移除的 `dsh-client-runtime`;保留 `≤0.1.6` 旧路径兼容。详见 CHANGELOG。
 - 已发布 **v1.1.1**(2026-09-09):纯兼容验证版,**无代码变更**——实测兼容 DSH 0.1.2-rc.1(桌面壳设置外壳 UI 改版,设置弹层根类更名等),设置 → 个人配置 四模块(Token 用量/个性化/外观/宠物)验证正常;配合 dsh-session-workbench v1.0.2 可避免其「会话视图」装饰误伤同数量 tab 条(曾致 外观/宠物 两 tab 被隐藏,根因在 workbench)。
 - 已发布 **v1.1.0**(2026-09-03):新增矢量桌宠皮肤「圆滚滚小黑 / 圆滚滚小蓝」(皮肤 id `black-vector` / `blue-vector`),纯 DOM 鼠标跟随(眼睛/头位移/上下"驼"形变/渐变光源四层 + 转向透视 + 靠近眨眼/点眼眯线/点身挠痒/随机放大),**非 WebP**;与位图皮肤(`black-whale`/`blue-whale`,动画 WebP)并存、互斥。宿主皮肤白名单扩为 4 个 + `PET_BITMAP_SKINS` 区分素材路由。
