@@ -2,11 +2,10 @@
 
 > A local, offline personal center for DeepSeek Harness — usage stats, cost estimation, custom instructions, global font size, and a desktop pet.
 
-A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Center** section to Settings, with four tabs:
+A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Center** section to Settings, with three tabs:
 
-- **Token Usage** — real usage stats: today / cumulative tokens, session count, tool calls, a GitHub-style activity heatmap (daily / weekly / cumulative), per-model breakdown, top tools, and session review; with sub-tabs (Overview / Review / Model Cost).
+- **Token Usage** — real usage stats: today / cumulative tokens, session count, tool calls, a GitHub-style activity heatmap (daily / weekly / cumulative), per-provider breakdown (with per-model detail), top tools, and session review; with sub-tabs (Overview / Review / Model Cost).
 - **Personalization** — global custom instructions (like ChatGPT / Codex "Personalization → Custom instructions"), applied to all chats on this machine.
-- **Appearance** — a global font-size stepper (default **14**, range **11–16**, step 1): scales the whole UI instantly and remembers your choice.
 - **Desktop Pet** — bitmap (black / blue whale) and vector ("round black / round blue") skins, driven by your real usage (5 emotions), with a session-status overview (double-click a session to jump into it).
 
 **Model cost estimation** lives inside Token Usage: per-model pricing (peak / off-peak, per currency, official presets) plus cache-hit-rate stats.
@@ -21,9 +20,9 @@ A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Cente
 |---|---|
 | ![Token Usage](docs/screenshots/token-usage.png) | ![Personalization](docs/screenshots/personalization.png) |
 
-| Appearance (global font size) | Pet |
-|---|---|
-| ![Appearance](docs/screenshots/appearance.png) | ![Pet](docs/screenshots/pet.png) |
+| Pet |
+|---|
+| ![Pet](docs/screenshots/pet.png) |
 
 ### Feature details
 
@@ -66,11 +65,11 @@ A local plugin for DeepSeek Harness (DSH) desktop / web. Adds a **Personal Cente
 - **Today overview**: token consumption / sessions / tool calls;
 - **Cumulative data**: total tokens / longest chat / total sessions / **cache-hit rate** / **estimated cost**;
 - **Token activity**: GitHub-contribution-style heatmap with **daily / weekly / cumulative** views;
-- **Per-model breakdown**: tokens, requests, **per-model cache-hit rate** and cost split by provider + model;
+- **Per-provider breakdown**: grouped by provider with subtotals plus per-model detail (tokens, requests, **cache-hit rate**, cost) — multiple providers and models tracked separately;
 - **Top tools**: sorted by call count (including MCP tools in `mcp__<server>__<tool>` form);
 - **Session review**: recent sessions (title / date / duration / tokens / cache-hit rate), **auto-excludes archived sessions**.
 
-Data source: aggregates local session logs in real time — numbers only, never reads content. See [docs/common/DESIGN.md](docs/common/DESIGN.md).
+Data source: aggregates local session logs (session.v4 / session.v3 / legacy) in real time — numbers only, never reads content. See [docs/common/DESIGN.md](docs/common/DESIGN.md).
 
 ### Model Cost (estimation)
 
@@ -87,9 +86,6 @@ Data source: aggregates local session logs in real time — numbers only, never 
 - **Injection preview**: live "global + current workspace" merged text + ≈token estimate at the bottom;
 - All local (settings.yaml), zero network, no migration of existing `custom-instructions` data; bilingual, DSH design tokens.
 
-### Appearance (global font size: v1.0)
-
-- New "Appearance" tab with a **global font-size stepper**: default **14**, range **11–16**, step 1, instant preview, saved to local `localStorage`;
 - The engine scans all stylesheets for DSH `--dsw-font-*` tokens and hard-coded font-size rules, then offsets everything by "current − 14" via a `<style>` override layer — **at the default 14 the layer is empty and the UI is 100% untouched**;
 - Only shifts global font size, never touches other modules' layout; local, zero network.
 
@@ -151,7 +147,7 @@ Settings → Plugins → Plugin Console, disable / remove `dsh-personal-center`;
 | v0.7 | **Personalization enhancement**: global + per-workspace (layered injection) + templates + preview | ✅ (v0.7) |
 | v0.8 | 5 new pet actions (thinking/waiting/celebrate/drag/wave) + session-status emotion-driven | ✅ (v0.8.1) |
 | v0.9 | "Personal Center" rename, pet single-page, session-status fixes (running-on-top / double-click / hover-stable), i18n, proportional window-follow | ✅ (v0.9.0) |
-| v1.0 | Appearance tab + global font-size engine, sticky/frosted header, i18n template library, code governance refactor (4 module prefixes + SDD) | ✅ (v1.0.0) |
+| v1.0 | Sticky/frosted header, i18n template library, code governance refactor (module prefixes + SDD) | ✅ (v1.0.0) |
 
 > **Planned (not yet)**: usage export (JSON/CSV), year-over-year comparison, more skins / emotions — see [docs/common/PLAN.md](docs/common/PLAN.md).
 
@@ -168,7 +164,7 @@ Settings → Plugins → Plugin Console, disable / remove `dsh-personal-center`;
 ├── cordis.patch.yml      # plugin row
 ├── lib/
 │   ├── index.js          # host: settings namespaces + prompt injection + stats + loopback routes (pet config/assets)
-│   ├── client.js         # browser: Personal Center UI (stats + cost + personalization + appearance/font + pet panel/overlay)
+│   ├── client.js         # browser: Personal Center UI (stats + cost + personalization + pet panel/overlay)
 │   └── pet-assets/       # pet animation assets (5×WebP, built from RGBA frames)
 ├── docs/
 │   ├── README.md          # knowledge map (entry)

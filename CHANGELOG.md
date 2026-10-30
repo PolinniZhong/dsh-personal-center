@@ -2,6 +2,22 @@
 
 本项目的版本历史。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/),版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-10-30
+
+### 修复
+- **Token 统计不生效(新版 DSH 会话日志换代)**:DSH 0.1.x 起会话日志由 `session.jsonl.zstd` 升级为 `session.v3.jsonl.zstd` / `session.v4.jsonl.zstd`,插件此前只扫旧文件名,统计停在旧数据。现按「代」优先读取(**v4 → v3 → 旧格式**),同一会话只取最高代,避免升级后新旧日志并存导致同一批消息重复计数。
+
+### 新增
+- **多供应商分别统计**:`assistant/message` 逐条按 `data.message.source`(provider / model)归属,会话中途切换供应商或模型也能准确计入;`/personal-center/stats` 新增 `byProvider`(供应商小计 + 其下模型明细)。
+- **「按供应商分布」(UI)**:「Token 用量 → 概览」由「按模型分布」升级为「按供应商分布」——供应商分组头显示小计 Token / 模型数 / 成本,其下逐模型展示 Token / 请求数 / 缓存命中率 / 成本;旧宿主或旧缓存统计在前端自动按 provider 兜底聚合。
+- **自动读取已配置模型**:通过设置服务枚举用户已配置的供应商 / 模型(`llm-pi-ai.providers`、`llm-*.models`、`agent-default-model`),即使 0 用量也纳入「按供应商分布」,每个模型分别统计 Token / 请求数 / 缓存命中率 / 成本。
+
+### 移除
+- **「外观」tab / 全局字号引擎下线**:DSH 官方设置已提供字号,插件不再重复提供;移除 `AppearanceTab`、`UI_FONT_*` 引擎与相关样式 / 文案,并清理旧版遗留的 `<style>` 覆盖层与 `localStorage` 键。设置页现为 3 个 tab(Token 用量 / 个性化 / 宠物)。
+
+### 文档
+- README(中 / 英)功能说明同步为「按供应商分布」与新版会话日志格式(session.v4 / session.v3 / 旧版)。
+
 ## [1.1.2] - 2026-09-28
 
 ### 兼容性

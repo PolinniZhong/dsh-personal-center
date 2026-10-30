@@ -15,23 +15,22 @@
 
 ## 1. 项目概况与模块地图(改代码前必读)
 
-- **dsh-personal-center**:DeepSeek Harness 个人中心插件(设置 → 个人配置),4 个 tab:
-  **Token 用量 / 个性化 / 外观 / 宠物**。
+- **dsh-personal-center**:DeepSeek Harness 个人中心插件(设置 → 个人配置),3 个 tab:
+  **Token 用量 / 个性化 / 宠物**。
 - 宿主:`lib/index.js`;客户端:`lib/client.js`(手写单 bundle,无 JSX,`react.createElement`)。
 
 ### 模块地图(类名前缀唯一;改代码先对号入座,勿跨模块改错)
 
 | 模块 | 关键组件 | 类名前缀 | 数据源 |
 |---|---|---|---|
-| Token 用量 | `ProfileTab` / `TokenActivity` / `CostEditor`(成本子 tab) | `.dsh-pc-profile-*` | `/personal-center/stats`、`/personal-center/pricing` |
+| Token 用量 | `ProfileTab` / `TokenActivity` / `CostEditor`(成本子 tab) | `.dsh-pc-profile-*` | 会话日志(v4/v3/legacy)、`/personal-center/stats`、`/personal-center/pricing` |
 | 个性化 | `PersonalizationTab` | `.dsh-pc-pers-*` | `/personal-center/instructions`、`/current-workspace`、`/workspaces` |
-| 外观 | `AppearanceTab` + 全局字号引擎 `UI_FONT_*` | `.dsh-pc-appear-*` | `localStorage`(uiFont) |
 | 宠物 | `PetPanel`/`PetSection`;`PetStatusConfig`(会话状态卡);`PetWidget`(位图浮层)/`VectorPetWidget`(矢量浮层);`PetStatusPanel` | `.dsh-pc-pet-*`、`.dsh-pc-petstatus-*`、`.dsh-pet-*`、`.dsh-pet-status-*`、`.dsh-pet-vector-*` | `/personal-center/pet`、`ctx.get("sessions")`、`/stats` |
 | 共享外壳 | `PersonalCenterSection` / `TabButton` / `PillTabButton` | `.dsh-pc-section/tabs/tab/panel/group/heading/intro/mock` | — |
 
 ### 运行逻辑(分区怎么跑起来)
 
-1. `PersonalCenterSection` 是分区外壳:`TabButton` 在 4 个 tab 间切换,`react.useState("profile")` 决定渲染哪个模块组件。
+1. `PersonalCenterSection` 是分区外壳:`TabButton` 在 3 个 tab 间切换,`react.useState("profile")` 决定渲染哪个模块组件。
 2. **事件驱动优先,能订阅就不轮询**:宠物情绪订阅 `sessions.list`(零轮询);仅统计/宠物用量走 30s 轮询。
 3. 宠物是「纯 DOM 浮层 + 单页设置卡」;会话状态概览直接读平台 `ctx.get("sessions")`(list + per-session subscribe),零轮询。
 
@@ -57,6 +56,7 @@
   旧路径。旧 `settings.yaml` 的 section 需按同名字段组搬入 entry config;`custom-instructions` 数据**永不迁移**原则不变。
 - **设置文档路径**:0.1.7 起 `settings.documentPath` = profile 补丁路径(旧版为 `<dshHome>/settings.yaml`),
   会话日志/归档 storages 目录按多候选探测,勿直接 `dirname(documentPath)`。
+- **已配置模型自动读取**:`discoverConfiguredModels(ctx)` 走 0.1.7 的 `settings.describe()`,从 `llm-pi-ai.providers` / `llm-*.models` / `agent-default-model` 枚举供应商与模型;0 用量模型也并入 `byProvider`/`byModel`(便于分别统计与逐模型配置价格)。≤0.1.6 无 `describe()` 时退化为「仅统计日志中出现过的模型」。
 - **工作区发现**:`/personal-center/workspaces` 必须从各会话日志 `session.cwd` 收集**真实路径**去重
   (已实现 `discoverWorkspaces`);**禁止**返回会话目录名(`--Users-…--` 模糊编码,会与真实路径 key 重复)。
 - **当前工作区**:`/personal-center/current-workspace` = 最近活动会话 cwd(一次性读取,非轮询)。
@@ -98,7 +98,8 @@
 
 ## 5. 版本状态
 
-- **本地已就绪、待发布 v1.1.2**(2026-09-28):**DSH 0.1.7 兼容修复**——设置 API 换模型(`Config` schema + `describe/update` 适配层,`settingsNamespace`/`register` 已从新版移除)、自绘设置页声明、`documentPath` 语义变化导致的 sessions/storages 路径修正、client inject 去掉已移除的 `dsh-client-runtime`;保留 `≤0.1.6` 旧路径兼容。详见 CHANGELOG。
+- **本地已就绪、待发布 v1.2.0**(2026-10-30):**Token 统计修复 + 多供应商分别统计 + 外观下线**——会话日志按代读取(`session.v4` → `session.v3` → 旧格式,同一会话只取最高代防重复)、逐条按 `message.source` 归属 provider/model、新增 `byProvider` 聚合与「按供应商分布」分组 UI(旧宿主/旧缓存由前端兜底聚合)、自动读取已配置供应商/模型(0 用量也列出);并移除「外观」tab 与全局字号引擎(DSH 官方设置已提供字号),设置页现为 3 个 tab。详见 CHANGELOG。
+- 已发布 **v1.1.2**(2026-09-28):**DSH 0.1.7 兼容修复**——设置 API 换模型(`Config` schema + `describe/update` 适配层,`settingsNamespace`/`register` 已从新版移除)、自绘设置页声明、`documentPath` 语义变化导致的 sessions/storages 路径修正、client inject 去掉已移除的 `dsh-client-runtime`;保留 `≤0.1.6` 旧路径兼容。详见 CHANGELOG。
 - 已发布 **v1.1.1**(2026-09-09):纯兼容验证版,**无代码变更**——实测兼容 DSH 0.1.2-rc.1(桌面壳设置外壳 UI 改版,设置弹层根类更名等),设置 → 个人配置 四模块(Token 用量/个性化/外观/宠物)验证正常;配合 dsh-session-workbench v1.0.2 可避免其「会话视图」装饰误伤同数量 tab 条(曾致 外观/宠物 两 tab 被隐藏,根因在 workbench)。
 - 已发布 **v1.1.0**(2026-09-03):新增矢量桌宠皮肤「圆滚滚小黑 / 圆滚滚小蓝」(皮肤 id `black-vector` / `blue-vector`),纯 DOM 鼠标跟随(眼睛/头位移/上下"驼"形变/渐变光源四层 + 转向透视 + 靠近眨眼/点眼眯线/点身挠痒/随机放大),**非 WebP**;与位图皮肤(`black-whale`/`blue-whale`,动画 WebP)并存、互斥。宿主皮肤白名单扩为 4 个 + `PET_BITMAP_SKINS` 区分素材路由。
 - 已发布 **v1.0.0**(2026-09-01):新增「外观」tab(全局字号引擎 `UI_FONT_*`,默认 14、11–16)+ 设置头部 sticky/毛玻璃 + i18n 模板库本地化 + 模块类名唯一化治理(4 模块前缀 + `docs/SDD.md`)——见本文件 §1。
